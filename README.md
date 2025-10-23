@@ -33,10 +33,10 @@ O sistema foi modelado para atender às seguintes entidades:
 ### Pré-requisitos
 1.  **Java JDK 17** ou superior.
 2.  **PostgreSQL** instalado e rodando na porta `5432`.
-3.  **IntelliJ IDEA** (recomendado).
+3.  **IntelliJ IDEA**.
 
 ### Configuração do Banco de Dados
-1.  Crie um novo banco de dados no pgAdmin com o nome: **`avaliacao_campus_uel`**.
+1.  Crie um novo banco de dados no pgAdmin com o nome: **`avaliacao_campus`**.
 2.  Execute o script SQL de criação das tabelas (disponível na pasta do projeto).
 3.  Ajuste o `application.properties` com suas credenciais do PostgreSQL (`username` e `password`).
 
