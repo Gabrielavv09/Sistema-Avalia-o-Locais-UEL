@@ -1,18 +1,67 @@
 package com.example.avaliacao_campus.repositories;
 
 import com.example.avaliacao_campus.models.Avaliacao;
-import org.springframework.data.repository.ListCrudRepository;
-import java.time.LocalDate;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-public interface AvaliacaoRepository extends ListCrudRepository<Avaliacao, Long> {
+@Repository
+public class AvaliacaoRepository {
 
-    // Busca por usuário e local
-    List<Avaliacao> findByIdUsuarioAndIdLocal(Long idUsuario, Long idLocal);
+    private final JdbcTemplate jdbc;
 
-    // Relatório: Busca todas as avaliações feitas em um local.
-    List<Avaliacao> findByIdLocal(Long idLocal);
+    public AvaliacaoRepository(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
 
-    // Relatório Temporal: Busca avaliações dentro de um período
-    List<Avaliacao> findByDataAvaliacaoBetween(LocalDate dataInicio, LocalDate dataFim);
+    // Retorna todas as avaliações
+    public List<Avaliacao> findAll() {
+        return jdbc.query("SELECT * FROM avaliacao", (rs, rowNum) -> {
+            Avaliacao a = new Avaliacao();
+            a.setIdAvaliacao(rs.getLong("id_avaliacao"));
+            a.setIdUsuario(rs.getLong("id_usuario"));
+            a.setIdLocal(rs.getLong("id_local"));
+            a.setDataAvaliacao(rs.getDate("data_avaliacao").toLocalDate());
+            return a;
+        });
+    }
+
+    public List<Avaliacao> findByUsuario(Long idUsuario) {
+        return jdbc.query("SELECT * FROM avaliacao WHERE id_usuario=?", (rs, rowNum) -> {
+            Avaliacao a = new Avaliacao();
+            a.setIdAvaliacao(rs.getLong("id_avaliacao"));
+            a.setIdUsuario(rs.getLong("id_usuario"));
+            a.setIdLocal(rs.getLong("id_local"));
+            a.setDataAvaliacao(rs.getDate("data_avaliacao").toLocalDate());
+            return a;
+        }, idUsuario);
+    }
+
+    public List<Avaliacao> findByLocal(Long idLocal) {
+        return jdbc.query("SELECT * FROM avaliacao WHERE id_local=?", (rs, rowNum) -> {
+            Avaliacao a = new Avaliacao();
+            a.setIdAvaliacao(rs.getLong("id_avaliacao"));
+            a.setIdUsuario(rs.getLong("id_usuario"));
+            a.setIdLocal(rs.getLong("id_local"));
+            a.setDataAvaliacao(rs.getDate("data_avaliacao").toLocalDate());
+            return a;
+        }, idLocal);
+    }
+
+
+    public Long saveAndReturnId(Avaliacao a) {
+        String sql = """
+            INSERT INTO avaliacao (id_usuario, id_local, data_avaliacao)
+            VALUES (?, ?, ?)
+            RETURNING id_avaliacao
+        """;
+
+        return jdbc.queryForObject(sql, Long.class,
+                a.getIdUsuario(), a.getIdLocal(), java.sql.Date.valueOf(a.getDataAvaliacao()));
+    }
+
+    public int delete(Long id) {
+        return jdbc.update("DELETE FROM avaliacao WHERE id_avaliacao=?", id);
+    }
 }

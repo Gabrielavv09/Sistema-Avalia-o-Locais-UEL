@@ -4,11 +4,10 @@ import com.example.avaliacao_campus.dtos.AvaliacaoRequestDTO;
 import com.example.avaliacao_campus.dtos.RespostaDTO;
 import com.example.avaliacao_campus.models.Avaliacao;
 import com.example.avaliacao_campus.models.AvaliacaoQuestao;
-import com.example.avaliacao_campus.models.AvaliacaoQuestaoKey;
 import com.example.avaliacao_campus.repositories.AvaliacaoQuestaoRepository;
 import com.example.avaliacao_campus.repositories.AvaliacaoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +18,6 @@ public class AvaliacaoService {
     private final AvaliacaoRepository avaliacaoRepository;
     private final AvaliacaoQuestaoRepository avaliacaoQuestaoRepository;
 
-    @Autowired
     public AvaliacaoService(
             AvaliacaoRepository avaliacaoRepository,
             AvaliacaoQuestaoRepository avaliacaoQuestaoRepository) {
@@ -31,50 +29,38 @@ public class AvaliacaoService {
         return avaliacaoRepository.findAll();
     }
 
-    /**
-     * Lógica Essencial: Registra uma avaliação completa (transação em duas tabelas).
-     * @param request O DTO com a avaliação e as respostas.
-     * @return A Avaliacao salva.
-     */
+    @Transactional
     public Avaliacao registrarAvaliacao(AvaliacaoRequestDTO request) {
 
-        // Não permitir que o mesmo usuário avalie o mesmo local duas vezes
-        List<Avaliacao> avaliacoesExistentes = avaliacaoRepository.findByIdUsuarioAndIdLocal(
-                request.getIdUsuario(),
-                request.getIdLocal());
+        // Verifica se o usuário já avaliou o local
+        var avaliacoesExistentes = avaliacaoRepository.findByUsuario(request.getIdUsuario())
+                .stream()
+                .filter(a -> a.getIdLocal().equals(request.getIdLocal()))
+                .toList();
 
         if (!avaliacoesExistentes.isEmpty()) {
-            throw new IllegalArgumentException("Erro: O usuário já realizou uma avaliação para este local.");
+            throw new IllegalArgumentException("Erro: o usuário já realizou uma avaliação para este local.");
         }
 
-        // Salvar a entidade AVALIACAO
+        //  Salvar a avaliação principal
         Avaliacao novaAvaliacao = new Avaliacao();
         novaAvaliacao.setIdUsuario(request.getIdUsuario());
         novaAvaliacao.setIdLocal(request.getIdLocal());
-        novaAvaliacao.setDataAvaliacao(LocalDate.now()); // Registra a data de hoje
+        novaAvaliacao.setDataAvaliacao(LocalDate.now());
 
-        // Salva a avaliação no BD para obter o ID gerado
-        Avaliacao avaliacaoSalva = avaliacaoRepository.save(novaAvaliacao);
+        // Método save deve retornar o ID gerado (veja o ajuste abaixo no repository)
+        Long idAvaliacaoGerado = avaliacaoRepository.saveAndReturnId(novaAvaliacao);
+        novaAvaliacao.setIdAvaliacao(idAvaliacaoGerado);
 
-        // Salvar as Respostas na AVALIACAO_QUESTAO
-        Long novoIdAvaliacao = avaliacaoSalva.getIdAvaliacao();
-
+        // Salvar respostas
         for (RespostaDTO respostaDTO : request.getRespostas()) {
             AvaliacaoQuestao resposta = new AvaliacaoQuestao();
-
-            // Cria a chave composta
-            AvaliacaoQuestaoKey key = new AvaliacaoQuestaoKey(
-                    novoIdAvaliacao,
-                    respostaDTO.getIdQuestao()
-            );
-
-            // Define a chave e o valor
-            resposta.setId(key); // Define o objeto de chave composta
+            resposta.setIdAvaliacao(idAvaliacaoGerado);
+            resposta.setIdQuestao(respostaDTO.getIdQuestao());
             resposta.setValor(respostaDTO.getValor());
-
             avaliacaoQuestaoRepository.save(resposta);
         }
 
-        return avaliacaoSalva;
+        return novaAvaliacao;
     }
 }

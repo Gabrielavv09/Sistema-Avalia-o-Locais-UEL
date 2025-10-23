@@ -2,8 +2,8 @@ package com.example.avaliacao_campus.service;
 
 import com.example.avaliacao_campus.models.LocalCampus;
 import com.example.avaliacao_campus.repositories.LocalCampusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,32 +12,40 @@ public class LocalCampusService {
 
     private final LocalCampusRepository localCampusRepository;
 
-    @Autowired
     public LocalCampusService(LocalCampusRepository localCampusRepository) {
         this.localCampusRepository = localCampusRepository;
     }
 
     public List<LocalCampus> buscarTodos() {
-        return localCampusRepository.findAllByOrderByNomeAsc(); // Usando o método customizado
+        // O repository JDBC já retorna todos ordenados se o SQL tiver ORDER BY
+        return localCampusRepository.findAll();
     }
 
     public Optional<LocalCampus> buscarPorId(Long id) {
         return localCampusRepository.findById(id);
     }
 
-    /**
-     * Lógica de Negócio: Salva um novo local após validar a unicidade do nome.
-     */
     public LocalCampus salvar(LocalCampus local) {
-        // Validação de Nome Único
-        if (local.getNome() != null && localCampusRepository.findByNome(local.getNome()).isPresent()) {
-            throw new IllegalArgumentException("Erro: O local " + local.getNome() + " já está cadastrado.");
+        // Verifica se já existe um local com esse nome
+        Optional<LocalCampus> existente = localCampusRepository.findByNome(local.getNome());
+
+        if (existente.isPresent() && (local.getIdLocal() == null ||
+                !existente.get().getIdLocal().equals(local.getIdLocal()))) {
+            throw new IllegalArgumentException("Erro: o local \"" + local.getNome() + "\" já está cadastrado.");
         }
 
-        return localCampusRepository.save(local);
+        if (local.getIdLocal() == null) {
+            // Novo local
+            localCampusRepository.save(local);
+        } else {
+            // Atualização
+            localCampusRepository.update(local);
+        }
+
+        return local;
     }
 
     public void deletar(Long id) {
-        localCampusRepository.deleteById(id);
+        localCampusRepository.delete(id);
     }
 }
