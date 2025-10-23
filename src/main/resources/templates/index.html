@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao Sistema de Avaliação</title>
+    <link rel="stylesheet" th:href="@{./geral/style.css}">
+</head>
+<body>
+<nav>
+    <div class="logo">
+        <h1>Campus UEL</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+        <li><a th:href="@{/questoes}">Questões</a></li>
+        <li><a th:href="@{/avaliacoes}">Avaliações</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <h2>Faça sua avaliação dos locais do campus!</h2>
+    <p>Compartilhe sua experiência sobre os espaços da Universidade Estadual de Londrina.</p>
+    <a href="/avaliacao/form" class="btn">Cadastrar Avaliação</a>
+</section>
+
+<section class="avaliacoes">
+    <h3>Últimas Avaliações</h3>
+    <div class="avaliacoes-list">
+        <div class="avaliacao-card" th:each="avaliacao : ${avaliacoes}">
+            <h4 th:text="${avaliacao.idLocal}">Local</h4>
+            <p th:text="${avaliacao.dataAvaliacao}">Data da Avaliação</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
+</footer>
+</body>
+</html>

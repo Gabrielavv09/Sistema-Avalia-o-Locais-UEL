@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Avaliação - Campus UEL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <h1>Campus UEL</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+        <li><a th:href="@{/questoes}">Questões</a></li>
+        <li><a th:href="@{/avaliacoes}">Avaliações</a></li>
+    </ul>
+</nav>
+
+<section class="avaliacao-form">
+    <h2>Adicionar Avaliação do Local do Campus</h2>
+    <form th:action="@{/avaliacoes/registrar}" method="post">
+
+        <h3>Cadastro de Usuário</h3>
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="aluno">Aluno</option>
+            <option value="professor">Professor</option>
+        </select>
+
+        <label for="curso">Curso (se aluno):</label>
+        <input type="text" id="curso" name="cursoNome" th:if="${tipo == 'aluno'}">
+
+        <label for="departamento">Departamento (se professor):</label>
+        <input type="text" id="departamento" name="departamento" th:if="${tipo == 'professor'}">
+
+        <h3>Selecione o Local e Responda às Questões</h3>
+        <label for="local">Local:</label>
+        <select id="local" name="idLocal" required>
+            <option th:each="local : ${locais}" th:value="${local.idLocal}" th:text="${local.nome}"></option>
+        </select>
+
+        <div class="questoes">
+            <h4>Questões Padrão</h4>
+            <div th:each="questao : ${questoesPadrao}">
+                <label th:for="*{respostas[${questao.idQuestao}]}">
+                    <span th:text="${questao.texto}"></span>
+                </label>
+                <input type="text" name="respostas[${questao.idQuestao}]" required>
+            </div>
+
+            <h4>Questões Personalizadas</h4>
+            <div th:each="questao : ${questoesPersonalizadas}">
+                <label th:for="*{respostas[${questao.idQuestao}]}">
+                    <span th:text="${questao.texto}"></span>
+                </label>
+                <input type="text" name="respostas[${questao.idQuestao}]" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn">Salvar Avaliação</button>
+    </form>
+</section>
+
+<footer>
+    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>
