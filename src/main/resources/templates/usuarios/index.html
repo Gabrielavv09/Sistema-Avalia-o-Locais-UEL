@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao Sistema de Avaliação</title>
+    <title>Usuários - Campus UEL</title>
 
     <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
-
     <link rel="stylesheet" th:href="@{./geral/style.css}">
 </head>
 <body>
@@ -24,17 +23,19 @@
 </nav>
 
 <section class="hero">
-    <h2>Faça sua avaliação dos locais do campus 🌟</h2>
-    <p>Compartilhe sua experiência sobre os espaços da Universidade Estadual de Londrina.</p>
-    <a href="/avaliacoes/form" class="btn">Cadastrar Avaliação</a>
+    <h2>Usuários do Sistema 👤</h2>
+    <p>Gerencie os usuários que têm acesso ao sistema de avaliação do campus UEL.</p>
+    <a href="/usuarios/novo" class="btn">Cadastrar Novo Usuário</a>
 </section>
 
-<section class="avaliacoes">
-    <h3>Últimas Avaliações</h3>
-    <div class="avaliacoes-list">
-        <div class="avaliacao-card" th:each="avaliacao : ${avaliacoes}">
-            <h4 th:text="${avaliacao.idLocal}">Local</h4>
-            <p th:text="${avaliacao.dataAvaliacao}">Data da Avaliação</p>
+<section class="usuarios">
+    <h3>Usuários Cadastrados</h3>
+    <div class="usuarios-list">
+        <div class="usuario-card" th:each="usuario : ${usuarios}">
+            <h4 th:text="${usuario.nome}">Nome do Usuário</h4>
+            <p th:text="${usuario.email}">Email</p>
+            <a th:href="@{/usuarios/editar/{id}(id=${usuario.idUsuario})}" class="btn">Editar</a>
+            <a th:href="@{/usuarios/deletar/{id}(id=${usuario.idUsuario})}" class="btn">Deletar</a>
         </div>
     </div>
 </section>
@@ -42,5 +43,6 @@
 <footer>
     <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
 </footer>
+
 </body>
 </html>

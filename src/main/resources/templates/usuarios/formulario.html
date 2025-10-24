@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Usuário - Campus UEL</title>
+    <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
+    <link rel="stylesheet" href="../geral/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <h1>Campus UEL</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+        <li><a th:href="@{/questoes}">Questões</a></li>
+        <li><a th:href="@{/}">Avaliações</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <h2>Cadastrar/Editar Usuário</h2>
+    <p>Preencha os campos abaixo para cadastrar ou editar um usuário.</p>
+</section>
+
+<section class="usuarios-form">
+    <form th:action="@{/usuarios/salvar}" method="post">
+
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" th:value="${usuario.nome}" required>
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" th:value="${usuario.email}" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" th:value="${usuario.senha}" required>
+
+        <label for="tipo">Tipo de Usuário:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="">Selecione...</option>
+            <option value="Administrador" th:selected="${usuario.tipo == 'Administrador'}">Administrador</option>
+            <option value="Avaliador" th:selected="${usuario.tipo == 'Avaliador'}">Avaliador</option>
+        </select>
+
+        <button type="submit" class="btn">Salvar Usuário</button>
+    </form>
+</section>
+
+<footer>
+    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>

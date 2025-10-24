@@ -1,15 +1,14 @@
 package com.example.avaliacao_campus.controllers;
-// Gerenciando o CRUD de Usuarios
 
 import com.example.avaliacao_campus.models.Usuario;
 import com.example.avaliacao_campus.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/usuarios")
@@ -22,35 +21,46 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    // Exibir o Formulário de Cadastro
-    // GET /usuarios/cadastro
-    @GetMapping("/cadastro")
-    public String exibirFormulario(Model model) {
-        // Envia um objeto Usuario vazio para o formulário Thymeleaf
-        model.addAttribute("usuario", new Usuario());
-        // Retorna o nome do template
-        return "usuario/cadastro";
+    @GetMapping("")
+    public String listarTodos(Model model) {
+        List<Usuario> usuarios = usuarioService.buscarTodos();
+        model.addAttribute("usuarios", usuarios);
+        return "usuarios/index";
     }
 
-    // Cadastrar um novo usuário
-    // POST /usuarios/salvar
+    @GetMapping("/novo")
+    public String exibirFormulario(Model model) {
+        model.addAttribute("usuario", new Usuario());
+        return "usuarios/formulario";
+    }
+
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute Usuario usuario, Model model) {
+    public String salvar(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes) {
         try {
             usuarioService.salvar(usuario);
-            return "redirect:/usuarios/lista";
+            redirectAttributes.addFlashAttribute("mensagem", "Usuário cadastrado com sucesso!");
+            return "redirect:/usuarios/";
         } catch (IllegalArgumentException e) {
-            model.addAttribute("usuario", usuario); // Mantém os dados preenchidos
-            model.addAttribute("erro", e.getMessage());
-            return "usuario/cadastro";
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/usuarios/novo";
         }
     }
 
-    // Listar todos os usuários
-    // GET /usuarios/lista
-    @GetMapping("/lista")
-    public String listarTodos(Model model) {
-        model.addAttribute("usuarios", usuarioService.buscarTodos());
-        return "usuario/lista";
+    @GetMapping("/deletar/{id}")
+    public String deletar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            usuarioService.deletar(id);
+            redirectAttributes.addFlashAttribute("mensagem", "Usuário deletado com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao deletar o usuário.");
+        }
+        return "redirect:/usuarios/";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, Model model) {
+        Usuario usuario = usuarioService.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+        model.addAttribute("usuario", usuario);
+        return "usuarios/formulario";
     }
 }

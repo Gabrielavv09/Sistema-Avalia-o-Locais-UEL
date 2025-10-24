@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Questão - Campus UEL</title>
+    <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
+    <link rel="stylesheet" href="../geral/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <h1>Campus UEL</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+        <li><a th:href="@{/questoes}">Questões</a></li>
+        <li><a th:href="@{/}">Avaliações</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <h2>Cadastrar/Editar Questão</h2>
+    <p>Preencha os campos abaixo para cadastrar ou editar uma questão de avaliação.</p>
+</section>
+
+<section class="questoes-form">
+    <form th:action="@{/questoes/salvar}" method="post">
+
+        <label for="titulo">Título da Questão:</label>
+        <input type="text" id="titulo" name="titulo" th:value="${questao.titulo}" required>
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" rows="4" required th:text="${questao.descricao}"></textarea>
+
+        <label for="tipo">Tipo de Questão:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="">Selecione...</option>
+            <option value="Dissertativa" th:selected="${questao.tipo == 'Dissertativa'}">Dissertativa</option>
+            <option value="Múltipla Escolha" th:selected="${questao.tipo == 'Múltipla Escolha'}">Múltipla Escolha</option>
+            <option value="Escala" th:selected="${questao.tipo == 'Escala'}">Escala</option>
+        </select>
+
+        <label for="peso">Peso da Questão:</label>
+        <input type="number" id="peso" name="peso" th:value="${questao.peso}" min="1" max="10" required>
+
+        <button type="submit" class="btn">Salvar Questão</button>
+    </form>
+</section>
+
+<footer>
+    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>

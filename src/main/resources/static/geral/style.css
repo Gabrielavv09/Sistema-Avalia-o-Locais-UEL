@@ -1,11 +1,15 @@
-/* Reset básico */
+/* =========================
+   RESET BÁSICO
+========================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body */
+/* =========================
+   BODY
+========================= */
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
@@ -13,7 +17,9 @@ body {
     color: #333;
 }
 
-/* Navbar */
+/* =========================
+   NAVBAR
+========================= */
 nav {
     background-color: #333;
     color: #fff;
@@ -50,7 +56,9 @@ nav .nav-links a:hover {
     background-color: #555;
 }
 
-/* Hero Section */
+/* =========================
+   HERO SECTION
+========================= */
 .hero {
     background: #4caf50;
     color: white;
@@ -83,25 +91,27 @@ nav .nav-links a:hover {
     color: #fff;
 }
 
-/* Avaliações Section */
-.avaliacoes {
+/* =========================
+   LISTAS DE ITENS (Locais, Usuários, Questões)
+========================= */
+.locais, .usuarios, .questoes {
     padding: 40px 20px;
 }
 
-.avaliacoes h3 {
+.locais h3, .usuarios h3, .questoes h3 {
     text-align: center;
     font-size: 32px;
     margin-bottom: 30px;
 }
 
-.avaliacoes-list {
+.locais-list, .usuarios-list, .questoes-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     justify-items: center;
 }
 
-.avaliacao-card {
+.local-card, .usuario-card, .questao-card {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -110,17 +120,176 @@ nav .nav-links a:hover {
     text-align: center;
 }
 
-.avaliacao-card h4 {
+.local-card h4, .usuario-card h4, .questao-card h4 {
     font-size: 22px;
     margin-bottom: 10px;
 }
 
-.avaliacao-card p {
+.local-card p, .usuario-card p, .questao-card p {
     font-size: 16px;
     color: #666;
+    margin-bottom: 10px;
 }
 
-/* Footer */
+.local-card .btn, .usuario-card .btn, .questao-card .btn {
+    display: inline-block;
+    background-color: #4caf50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.local-card .btn:hover,
+.usuario-card .btn:hover,
+.questao-card .btn:hover {
+    background-color: #388e3c;
+}
+
+/* =========================
+   FORMULÁRIOS (Locais, Usuários, Questões, Avaliação)
+========================= */
+.locais-form, .usuarios-form, .questoes-form, .avaliacao-form {
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+form {
+    background-color: #fff;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1.05rem;
+}
+
+form input,
+form select,
+form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    color: #333;
+    background-color: #fafafa;
+    transition: border-color 0.2s ease;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+form button,
+form .btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover,
+form .btn:hover {
+    background-color: #388e3c;
+}
+
+/* =========================
+   FORMULÁRIO DE AVALIAÇÃO — TÍTULOS E QUESTÕES
+========================= */
+.avaliacao-form h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.avaliacao-form h3 {
+    margin-top: 25px;
+    font-size: 20px;
+    color: #4caf50;
+    border-bottom: 2px solid #4caf50;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.avaliacao-form h4 {
+    font-size: 18px;
+    color: #333;
+    margin: 15px 0 8px;
+}
+
+.questoes {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.questoes label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.questoes input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.questoes input:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+/* =========================
+   ALERTAS DE MENSAGEM (sucesso/erro)
+========================= */
+.alert {
+    text-align: center;
+    padding: 12px;
+    border-radius: 5px;
+    margin: 15px auto;
+    max-width: 600px;
+    font-weight: bold;
+}
+
+.alert-success {
+    background-color: #c8e6c9;
+    color: #256029;
+    border: 1px solid #2e7d32;
+}
+
+.alert-error {
+    background-color: #ffcdd2;
+    color: #b71c1c;
+    border: 1px solid #d32f2f;
+}
+
+/* =========================
+   FOOTER
+========================= */
 footer {
     background-color: #333;
     color: #fff;
@@ -132,74 +301,29 @@ footer p {
     font-size: 14px;
 }
 
-/* Formulário de Avaliação */
-.avaliacao-form {
-    max-width: 800px;
-    margin: 30px auto;
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+/* =========================
+   RESPONSIVIDADE
+========================= */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
 
-.avaliacao-form h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
+    nav .nav-links {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
 
-.avaliacao-form h3 {
-    font-size: 22px;
-    margin-bottom: 10px;
-}
+    .locais-list,
+    .usuarios-list,
+    .questoes-list {
+        grid-template-columns: 1fr;
+    }
 
-.avaliacao-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-.avaliacao-form input[type="text"],
-.avaliacao-form input[type="email"],
-.avaliacao-form select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.avaliacao-form .questoes {
-    margin-bottom: 20px;
-}
-
-.avaliacao-form .questoes h4 {
-    margin-bottom: 15px;
-    font-size: 18px;
-}
-
-.avaliacao-form .questoes label {
-    font-size: 16px;
-}
-
-.avaliacao-form .questoes input[type="text"] {
-    width: calc(100% - 20px); /* Ajuste para o padding */
-    margin-bottom: 15px;
-}
-
-.avaliacao-form .btn {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    background-color: #4caf50;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.avaliacao-form .btn:hover {
-    background-color: #388e3c;
+    form {
+        width: 90%;
+        padding: 20px;
+    }
 }
