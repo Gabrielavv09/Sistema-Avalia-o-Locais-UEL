@@ -43,7 +43,7 @@ public class AvaliacaoController {
         model.addAttribute("questoesPadrao", questoesPadrao);
         model.addAttribute("questoesPersonalizadas", questoesPersonalizadas);
         model.addAttribute("locais", locais);
-        model.addAttribute("avaliacaoRequest", new AvaliacaoRequestDTO()); 
+        model.addAttribute("avaliacaoRequest", new AvaliacaoRequestDTO());
 
         return "avaliacao/formulario";
     }

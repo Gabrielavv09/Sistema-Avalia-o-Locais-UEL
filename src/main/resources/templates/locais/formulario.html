@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Local - Campus UEL</title>
+    <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
+    <link rel="stylesheet" href="../geral/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <h1>Campus UEL</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+        <li><a th:href="@{/questoes}">Questões</a></li>
+        <li><a th:href="@{/}">Avaliações</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <h2>Cadastrar/Editar Local</h2>
+    <p>Preencha os campos abaixo para cadastrar ou editar um local.</p>
+</section>
+
+<section class="locais-form">
+    <form th:action="@{/locais/salvar}" method="post">
+
+        <label for="nome">Nome do Local:</label>
+        <input type="text" id="nome" name="nome" th:value="${local.nome}" required>
+
+        <label for="localizacao">Localização:</label>
+        <input type="text" id="localizacao" name="localizacao" th:value="${local.localizacao}" required>
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" required th:text="${local.descricao}"></textarea>
+
+        <label for="urlImage">URL da Imagem:</label>
+        <input type="text" id="urlImage" name="urlImage" th:value="${local.urlImage}">
+
+        <button type="submit" class="btn">Salvar Local</button>
+    </form>
+</section>
+
+<footer>
+    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>

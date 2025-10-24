@@ -1,11 +1,9 @@
-/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body */
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
@@ -13,7 +11,6 @@ body {
     color: #333;
 }
 
-/* Navbar */
 nav {
     background-color: #333;
     color: #fff;
@@ -50,7 +47,7 @@ nav .nav-links a:hover {
     background-color: #555;
 }
 
-/* Hero Section */
+/* Hero */
 .hero {
     background: #4caf50;
     color: white;
@@ -83,7 +80,7 @@ nav .nav-links a:hover {
     color: #fff;
 }
 
-/* Avaliações Section */
+/* Avaliações */
 .avaliacoes {
     padding: 40px 20px;
 }

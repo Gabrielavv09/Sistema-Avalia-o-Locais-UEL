@@ -5,15 +5,13 @@ import com.example.avaliacao_campus.service.LocalCampusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@Controller // Mudança de @RestController para @Controller
-@RequestMapping("/locais") // Rota base: /locais
+@Controller
+@RequestMapping("/locais")
 public class LocalCampusController {
 
     private final LocalCampusService localCampusService;
@@ -23,32 +21,46 @@ public class LocalCampusController {
         this.localCampusService = localCampusService;
     }
 
-    // GET /locais/cadastro
-    @GetMapping("/cadastro")
-    public String exibirFormulario(Model model) {
-        model.addAttribute("local", new LocalCampus());
-        return "local/cadastro";
+    @GetMapping("")
+    public String listarTodos(Model model) {
+        List<LocalCampus> locais = localCampusService.buscarTodos();
+        model.addAttribute("locais", locais);
+        return "locais/index";
     }
 
-    // Cadastrar um novo local
-    // POST /locais/salvar
+    @GetMapping("/novo")
+    public String exibirFormulario(Model model) {
+        model.addAttribute("local", new LocalCampus());
+        return "locais/formulario";
+    }
+
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute LocalCampus local, Model model) {
+    public String salvar(@ModelAttribute LocalCampus local, RedirectAttributes redirectAttributes) {
         try {
             localCampusService.salvar(local);
-            return "redirect:/locais/lista";
+            redirectAttributes.addFlashAttribute("mensagem", "Local cadastrado com sucesso!");
+            return "redirect:/locais/";
         } catch (IllegalArgumentException e) {
-            model.addAttribute("local", local);
-            model.addAttribute("erro", e.getMessage());
-            return "local/cadastro";
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/locais/novo";
         }
     }
 
-    // Listar todos os locais
-    // GET /locais/lista
-    @GetMapping("/lista")
-    public String listarTodos(Model model) {
-        model.addAttribute("locais", localCampusService.buscarTodos());
-        return "local/lista";
+    @GetMapping("/deletar/{id}")
+    public String deletar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            localCampusService.deletar(id);
+            redirectAttributes.addFlashAttribute("mensagem", "Local deletado com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao deletar o local.");
+        }
+        return "redirect:/locais/";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, Model model) {
+        LocalCampus local = localCampusService.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Local não encontrado"));
+        model.addAttribute("local", local);
+        return "locais/formulario";
     }
 }

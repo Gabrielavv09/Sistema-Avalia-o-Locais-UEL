@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao Sistema de Avaliação</title>
+    <title>Locais - Campus UEL</title>
 
     <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
 
@@ -24,17 +24,19 @@
 </nav>
 
 <section class="hero">
-    <h2>Faça sua avaliação dos locais do campus!</h2>
-    <p>Compartilhe sua experiência sobre os espaços da Universidade Estadual de Londrina.</p>
-    <a href="/avaliacoes/form" class="btn">Cadastrar Avaliação</a>
+    <h2>Locais do Campus</h2>
+    <p>Gerencie os locais avaliados dentro do campus UEL.</p>
+    <a href="/locais/novo" class="btn">Cadastrar Novo Local</a> <!-- Link para adicionar novo local -->
 </section>
 
-<section class="avaliacoes">
-    <h3>Últimas Avaliações</h3>
-    <div class="avaliacoes-list">
-        <div class="avaliacao-card" th:each="avaliacao : ${avaliacoes}">
-            <h4 th:text="${avaliacao.idLocal}">Local</h4>
-            <p th:text="${avaliacao.dataAvaliacao}">Data da Avaliação</p>
+<section class="locais">
+    <h3>Locais Cadastrados</h3>
+    <div class="locais-list">
+        <div class="local-card" th:each="local : ${locais}">
+            <h4 th:text="${local.nome}">Nome do Local</h4>
+            <p th:text="${local.localizacao}">Localização</p>
+            <a th:href="@{/locais/editar/{id}(id=${local.idLocal})}" class="btn">Editar</a>
+            <a th:href="@{/locais/deletar/{id}(id=${local.idLocal})}" class="btn">Deletar</a>
         </div>
     </div>
 </section>
@@ -42,5 +44,6 @@
 <footer>
     <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
 </footer>
+
 </body>
 </html>
