@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Local - Campus UEL</title>
-    <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
-    <link rel="stylesheet" href="../geral/style.css">
+    <link rel="icon"
+          th:href="@{'data:image/svg+xml;charset=utf-8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;17&quot; height=&quot;18&quot;><text y=&quot;15&quot; font-size=&quot;14&quot;>💚</text></svg>'}">
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
+
 </head>
 <body>
 
@@ -14,10 +16,10 @@
         <h1>Campus UEL</h1>
     </div>
     <ul class="nav-links">
+        <li><a th:href="@{/}">Tela inicial</a></li>
         <li><a th:href="@{/usuarios}">Usuários</a></li>
         <li><a th:href="@{/locais}">Locais</a></li>
         <li><a th:href="@{/questoes}">Questões</a></li>
-        <li><a th:href="@{/}">Avaliações</a></li>
     </ul>
 </nav>
 

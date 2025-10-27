@@ -14,10 +14,10 @@
         <h1>Campus UEL</h1>
     </div>
     <ul class="nav-links">
+        <li><a th:href="@{/}">Tela inicial</a></li>
         <li><a th:href="@{/usuarios}">Usuários</a></li>
         <li><a th:href="@{/locais}">Locais</a></li>
         <li><a th:href="@{/questoes}">Questões</a></li>
-        <li><a th:href="@{/}">Avaliações</a></li>
     </ul>
 </nav>
 
@@ -29,11 +29,8 @@
 <section class="questoes-form">
     <form th:action="@{/questoes/salvar}" method="post">
 
-        <label for="titulo">Título da Questão:</label>
-        <input type="text" id="titulo" name="titulo" th:value="${questao.titulo}" required>
-
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="4" required th:text="${questao.descricao}"></textarea>
+        <label for="texto">Texto da Questão:</label>
+        <textarea id="texto" name="texto" rows="3" th:text="${questao.texto}" required></textarea>
 
         <label for="tipo">Tipo de Questão:</label>
         <select id="tipo" name="tipo" required>
@@ -43,11 +40,12 @@
             <option value="Escala" th:selected="${questao.tipo == 'Escala'}">Escala</option>
         </select>
 
-        <label for="peso">Peso da Questão:</label>
-        <input type="number" id="peso" name="peso" th:value="${questao.peso}" min="1" max="10" required>
+        <label for="idUsuarioCriador">ID do Usuário Criador:</label>
+        <input type="number" id="idUsuarioCriador" name="idUsuarioCriador" th:value="${questao.idUsuarioCriador}" required>
 
         <button type="submit" class="btn">Salvar Questão</button>
     </form>
+
 </section>
 
 <footer>

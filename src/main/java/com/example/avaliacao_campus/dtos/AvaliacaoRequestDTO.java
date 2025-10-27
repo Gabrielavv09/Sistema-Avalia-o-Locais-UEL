@@ -2,16 +2,20 @@ package com.example.avaliacao_campus.dtos;
 
 import lombok.Data;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class AvaliacaoRequestDTO {
-
-    // ID do Usuário que está fazendo a avaliação (Aluno ou Professor)
     private Long idUsuario;
+    private String nome;
+    private String email;
+    private String tipo;
+    private String cursoNome;
+    private String departamento;
 
-    // ID do Local do Campus que está sendo avaliado (RU, Biblioteca, etc.)
     private Long idLocal;
 
-    // A lista de respostas para as questões da avaliação
-    private List<RespostaDTO> respostas;
+    private Map<Long, String> respostas;
+
+    private List<NovaQuestaoDTO> novasQuestoes;
 }

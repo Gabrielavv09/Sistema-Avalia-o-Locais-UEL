@@ -3,19 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adicionar Avaliação - Campus UEL</title>
+    <title>💬 Nova Avaliação - Campus UEL</title>
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
+    <script>
+        function adicionarQuestao() {
+            const container = document.getElementById('novas-questoes');
+            const index = container.children.length;
 
-    <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
-    <link rel="stylesheet" href="../geral/style.css">
+            const bloco = document.createElement('div');
+            bloco.classList.add('nova-questao');
+            bloco.innerHTML = `
+                <label>Texto da Questão:</label>
+                <input type="text" name="novasQuestoes[${index}].texto" required>
+
+                <label>Tipo:</label>
+                <select name="novasQuestoes[${index}].tipo" required>
+                    <option value="Dissertativa">Dissertativa</option>
+                    <option value="Escala">Escala</option>
+                    <option value="Múltipla Escolha">Múltipla Escolha</option>
+                </select>
+            `;
+            container.appendChild(bloco);
+        }
+    </script>
 </head>
 <body>
 
 <nav>
-    <div class="logo">
-        <h1>Campus UEL</h1>
-    </div>
+    <div class="logo"><h1>Campus UEL</h1></div>
     <ul class="nav-links">
-        <li><a th:href="@{/}">Tela inicial</a></li>
+        <li><a th:href="@{/}">Início</a></li>
         <li><a th:href="@{/usuarios}">Usuários</a></li>
         <li><a th:href="@{/locais}">Locais</a></li>
         <li><a th:href="@{/questoes}">Questões</a></li>
@@ -23,50 +40,50 @@
 </nav>
 
 <section class="avaliacao-form">
-    <h2>Adicionar Avaliação do Local do Campus</h2>
+    <h2>💬 Avaliação do Local</h2>
     <form th:action="@{/avaliacoes/registrar}" method="post">
 
-        <h3>Cadastro de Usuário</h3>
+        <h3>👤 Informações do Avaliador</h3>
         <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
+        <input id="nome" name="nome" required>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <label for="email">E-mail:</label>
+        <input id="email" name="email" type="email" required>
 
         <label for="tipo">Tipo:</label>
         <select id="tipo" name="tipo" required>
-            <option value="aluno">Aluno</option>
-            <option value="professor">Professor</option>
+            <option value="">Selecione...</option>
+            <option value="Aluno">Aluno</option>
+            <option value="Professor">Professor</option>
         </select>
 
-        <label for="curso">Curso (se aluno):</label>
-        <input type="text" id="curso" name="cursoNome" th:if="${tipo == 'aluno'}">
+        <label for="cursoNome">Curso (se aluno):</label>
+        <input id="cursoNome" name="cursoNome">
 
-        <label for="departamento">Departamento (se professor):</label>
-        <input type="text" id="departamento" name="departamento" th:if="${tipo == 'professor'}">
+        <label for="departamento">Departamento</label>
+        <input id="departamento" name="departamento">
 
-        <h3>Selecione o Local e Responda às Questões</h3>
-        <label for="local">Local:</label>
+        <h3>📍 Local Avaliado</h3>
         <select id="local" name="idLocal" required>
+            <option value="">Selecione o local...</option>
             <option th:each="local : ${locais}" th:value="${local.idLocal}" th:text="${local.nome}"></option>
         </select>
 
         <div class="questoes">
-            <h4>Questões Padrão</h4>
+            <h4>🧩 Questões Padrão</h4>
             <div th:each="questao : ${questoesPadrao}">
-                <label th:for="*{respostas[${questao.idQuestao}]}">
-                    <span th:text="${questao.texto}"></span>
-                </label>
-                <input type="text" name="respostas[${questao.idQuestao}]" required>
+                <label th:text="${questao.texto}"></label>
+                <input type="text" th:name="'respostas[' + ${questao.idQuestao} + ']'" required>
             </div>
 
-            <h4>Questões Personalizadas</h4>
+            <h4>💡 Questões Personalizadas Existentes</h4>
             <div th:each="questao : ${questoesPersonalizadas}">
-                <label th:for="*{respostas[${questao.idQuestao}]}">
-                    <span th:text="${questao.texto}"></span>
-                </label>
-                <input type="text" name="respostas[${questao.idQuestao}]" required>
+                <label th:text="${questao.texto}"></label>
+                <input type="text" th:name="'respostas[' + ${questao.idQuestao} + ']'" required>
             </div>
+
+            <div id="novas-questoes"></div>
+            <button type="button" class="btn" onclick="adicionarQuestao()">Adicionar Questão</button>
         </div>
 
         <button type="submit" class="btn">Salvar Avaliação</button>

@@ -1,66 +1,88 @@
 package com.example.avaliacao_campus.service;
 
 import com.example.avaliacao_campus.dtos.AvaliacaoRequestDTO;
-import com.example.avaliacao_campus.dtos.RespostaDTO;
-import com.example.avaliacao_campus.models.Avaliacao;
-import com.example.avaliacao_campus.models.AvaliacaoQuestao;
-import com.example.avaliacao_campus.repositories.AvaliacaoQuestaoRepository;
-import com.example.avaliacao_campus.repositories.AvaliacaoRepository;
+import com.example.avaliacao_campus.dtos.NovaQuestaoDTO;
+import com.example.avaliacao_campus.models.*;
+import com.example.avaliacao_campus.repositories.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AvaliacaoService {
 
     private final AvaliacaoRepository avaliacaoRepository;
     private final AvaliacaoQuestaoRepository avaliacaoQuestaoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final QuestaoRepository questaoRepository;
 
     public AvaliacaoService(
             AvaliacaoRepository avaliacaoRepository,
-            AvaliacaoQuestaoRepository avaliacaoQuestaoRepository) {
+            AvaliacaoQuestaoRepository avaliacaoQuestaoRepository,
+            UsuarioRepository usuarioRepository,
+            QuestaoRepository questaoRepository) {
         this.avaliacaoRepository = avaliacaoRepository;
         this.avaliacaoQuestaoRepository = avaliacaoQuestaoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.questaoRepository = questaoRepository;
     }
 
-    public List<Avaliacao> buscarTodas() {
+    public java.util.List<Avaliacao> buscarTodas() {
         return avaliacaoRepository.findAll();
     }
 
     @Transactional
     public Avaliacao registrarAvaliacao(AvaliacaoRequestDTO request) {
+        Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
+                .orElseGet(() -> {
+                    Usuario novo = new Usuario();
+                    novo.setNome(request.getNome());
+                    novo.setEmail(request.getEmail());
+                    novo.setTipo(request.getTipo());
+                    novo.setCursoNome(request.getCursoNome());
+                    novo.setDepartamento(request.getDepartamento());
+                    return usuarioRepository.save(novo);
+                });
 
-        // Verifica se o usuário já avaliou o local
-        var avaliacoesExistentes = avaliacaoRepository.findByUsuario(request.getIdUsuario())
+        var jaAvaliou = avaliacaoRepository.findByUsuario(usuario.getIdUsuario())
                 .stream()
-                .filter(a -> a.getIdLocal().equals(request.getIdLocal()))
-                .toList();
+                .anyMatch(a -> a.getIdLocal().equals(request.getIdLocal()));
 
-        if (!avaliacoesExistentes.isEmpty()) {
+        if (jaAvaliou) {
             throw new IllegalArgumentException("Erro: o usuário já realizou uma avaliação para este local.");
         }
 
-        //  Salvar a avaliação principal
-        Avaliacao novaAvaliacao = new Avaliacao();
-        novaAvaliacao.setIdUsuario(request.getIdUsuario());
-        novaAvaliacao.setIdLocal(request.getIdLocal());
-        novaAvaliacao.setDataAvaliacao(LocalDate.now());
+        Avaliacao avaliacao = new Avaliacao();
+        avaliacao.setIdUsuario(usuario.getIdUsuario());
+        avaliacao.setIdLocal(request.getIdLocal());
+        avaliacao.setDataAvaliacao(LocalDate.now());
 
-        // Método save deve retornar o ID gerado (veja o ajuste abaixo no repository)
-        Long idAvaliacaoGerado = avaliacaoRepository.saveAndReturnId(novaAvaliacao);
-        novaAvaliacao.setIdAvaliacao(idAvaliacaoGerado);
+        Long idAvaliacao = avaliacaoRepository.saveAndReturnId(avaliacao);
+        avaliacao.setIdAvaliacao(idAvaliacao);
 
-        // Salvar respostas
-        for (RespostaDTO respostaDTO : request.getRespostas()) {
-            AvaliacaoQuestao resposta = new AvaliacaoQuestao();
-            resposta.setIdAvaliacao(idAvaliacaoGerado);
-            resposta.setIdQuestao(respostaDTO.getIdQuestao());
-            resposta.setValor(respostaDTO.getValor());
-            avaliacaoQuestaoRepository.save(resposta);
+        if (request.getRespostas() != null) {
+            for (Map.Entry<Long, String> entry : request.getRespostas().entrySet()) {
+                AvaliacaoQuestao resposta = new AvaliacaoQuestao();
+                resposta.setIdAvaliacao(idAvaliacao);
+                resposta.setIdQuestao(entry.getKey());
+                resposta.setValor(entry.getValue());
+                avaliacaoQuestaoRepository.save(resposta);
+            }
         }
 
-        return novaAvaliacao;
+        if (request.getNovasQuestoes() != null) {
+            for (NovaQuestaoDTO nova : request.getNovasQuestoes()) {
+                Questao questao = new Questao();
+                questao.setTexto(nova.getTexto());
+                questao.setTipo(nova.getTipo());
+                questao.setIdUsuarioCriador(usuario.getIdUsuario());
+                questaoRepository.save(questao);
+            }
+        }
+
+        return avaliacao;
     }
 }
