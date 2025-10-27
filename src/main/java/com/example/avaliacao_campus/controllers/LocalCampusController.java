@@ -34,15 +34,41 @@ public class LocalCampusController {
         return "locais/formulario";
     }
 
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            LocalCampus local = localCampusService.buscarPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Local não encontrado"));
+            model.addAttribute("local", local);
+            return "locais/formulario";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/locais";
+        }
+    }
+
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute LocalCampus local, RedirectAttributes redirectAttributes) {
         try {
             localCampusService.salvar(local);
             redirectAttributes.addFlashAttribute("mensagem", "Local cadastrado com sucesso!");
-            return "redirect:/locais/";
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/locais";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao cadastrar local: " + e.getMessage());
             return "redirect:/locais/novo";
+        }
+    }
+
+    @PostMapping("/editar/{id}")
+    public String atualizar(@PathVariable Long id, @ModelAttribute LocalCampus local, RedirectAttributes redirectAttributes) {
+        try {
+            local.setIdLocal(id);
+            localCampusService.salvar(local);
+            redirectAttributes.addFlashAttribute("mensagem", "Local atualizado com sucesso!");
+            return "redirect:/locais";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao atualizar local: " + e.getMessage());
+            return "redirect:/locais/editar/" + id;
         }
     }
 
@@ -54,13 +80,6 @@ public class LocalCampusController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao deletar o local.");
         }
-        return "redirect:/locais/";
-    }
-
-    @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Long id, Model model) {
-        LocalCampus local = localCampusService.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Local não encontrado"));
-        model.addAttribute("local", local);
-        return "locais/formulario";
+        return "redirect:/locais";
     }
 }

@@ -16,4 +16,6 @@ public class Questao {
 
     // Chave Estrangeira (FK) para a tabela USUARIO
     private Long idUsuarioCriador;
+
+
 }

@@ -45,6 +45,7 @@ public class LocalCampusService {
         return local;
     }
 
+
     public void deletar(Long id) {
         localCampusRepository.delete(id);
     }

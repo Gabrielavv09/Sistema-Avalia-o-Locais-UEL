@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Questão - Campus UEL</title>
-    <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
-    <link rel="stylesheet" href="../geral/style.css">
+    <link rel="icon"
+          href="data:image/svg+xml;charset=utf-8,
+          <svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'>
+              <text y='15' font-size='14'>💚</text>
+          </svg>">
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
 </head>
 <body>
 
@@ -27,23 +31,45 @@
 </section>
 
 <section class="questoes-form">
-    <form th:action="@{/questoes/salvar}" method="post">
+
+    <form th:if="${questao.idQuestao != null}"
+          th:action="@{/questoes/editar/{id}(id=${questao.idQuestao})}"
+          th:object="${questao}"
+          method="post">
 
         <label for="texto">Texto da Questão:</label>
-        <textarea id="texto" name="texto" rows="3" th:text="${questao.texto}" required></textarea>
+        <textarea id="texto" th:field="*{texto}" required></textarea>
 
         <label for="tipo">Tipo de Questão:</label>
-        <select id="tipo" name="tipo" required>
-            <option value="">Selecione...</option>
-            <option value="Dissertativa" th:selected="${questao.tipo == 'Dissertativa'}">Dissertativa</option>
-            <option value="Múltipla Escolha" th:selected="${questao.tipo == 'Múltipla Escolha'}">Múltipla Escolha</option>
-            <option value="Escala" th:selected="${questao.tipo == 'Escala'}">Escala</option>
-        </select>
+        <input type="text" id="tipo" th:field="*{tipo}" required>
 
         <label for="idUsuarioCriador">ID do Usuário Criador:</label>
-        <input type="number" id="idUsuarioCriador" name="idUsuarioCriador" th:value="${questao.idUsuarioCriador}" required>
+        <input type="number" id="idUsuarioCriador" th:field="*{idUsuarioCriador}">
 
-        <button type="submit" class="btn">Salvar Questão</button>
+        <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+            <a href="/questoes" class="btn">Voltar</a>
+            <button type="submit" class="btn">Atualizar Questão</button>
+        </div>
+    </form>
+
+    <form th:unless="${questao.idQuestao != null}"
+          th:action="@{/questoes/salvar}"
+          th:object="${questao}"
+          method="post">
+
+        <label for="texto">Texto da Questão:</label>
+        <textarea id="texto" th:field="*{texto}" required></textarea>
+
+        <label for="tipo">Tipo de Questão:</label>
+        <input type="text" id="tipo" th:field="*{tipo}" required>
+
+        <label for="idUsuarioCriador">ID do Usuário Criador:</label>
+        <input type="number" id="idUsuarioCriador" th:field="*{idUsuarioCriador}">
+
+        <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+            <a href="/questoes" class="btn">Voltar</a>
+            <button type="submit" class="btn">Salvar Questão</button>
+        </div>
     </form>
 
 </section>

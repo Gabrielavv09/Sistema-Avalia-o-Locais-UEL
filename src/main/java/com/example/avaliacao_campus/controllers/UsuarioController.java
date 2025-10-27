@@ -29,9 +29,22 @@ public class UsuarioController {
     }
 
     @GetMapping("/novo")
-    public String exibirFormulario(Model model) {
+    public String novo(Model model) {
         model.addAttribute("usuario", new Usuario());
         return "usuarios/formulario";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Usuario usuario = usuarioService.buscarPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+            model.addAttribute("usuario", usuario);
+            return "usuarios/formulario";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/usuarios";
+        }
     }
 
     @PostMapping("/salvar")
@@ -39,10 +52,25 @@ public class UsuarioController {
         try {
             usuarioService.salvar(usuario);
             redirectAttributes.addFlashAttribute("mensagem", "Usuário cadastrado com sucesso!");
-            return "redirect:/usuarios/";
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/usuarios";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao cadastrar usuário: " + e.getMessage());
             return "redirect:/usuarios/novo";
+        }
+    }
+
+    @PostMapping("/editar/{id}")
+    public String atualizar(@PathVariable Long id,
+                            @ModelAttribute Usuario usuario,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            usuario.setIdUsuario(id);
+            usuarioService.salvar(usuario);
+            redirectAttributes.addFlashAttribute("mensagem", "Usuário atualizado com sucesso!");
+            return "redirect:/usuarios";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao atualizar usuário: " + e.getMessage());
+            return "redirect:/usuarios/editar/" + id;
         }
     }
 
@@ -54,13 +82,6 @@ public class UsuarioController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao deletar o usuário.");
         }
-        return "redirect:/usuarios/";
-    }
-
-    @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Long id, Model model) {
-        Usuario usuario = usuarioService.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
-        model.addAttribute("usuario", usuario);
-        return "usuarios/formulario";
+        return "redirect:/usuarios";
     }
 }

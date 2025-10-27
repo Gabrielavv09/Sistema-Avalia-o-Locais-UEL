@@ -29,32 +29,41 @@
 </section>
 
 <section class="usuarios-form">
-    <form th:action="@{/usuarios/salvar}" method="post">
+    <form th:action="${usuario.idUsuario} != null ?
+    @{/usuarios/editar/{id}(id=${usuario.idUsuario})} :
+    @{/usuarios/salvar}"
+          th:object="${usuario}"
+          method="post">
 
         <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" th:value="${usuario.nome}" required>
+        <input type="text" id="nome" th:field="*{nome}" required>
 
         <label for="email">E-mail:</label>
-        <input type="email" id="email" name="email" th:value="${usuario.email}" required>
+        <input type="email" id="email" th:field="*{email}" required>
 
         <label for="tipo">Tipo de Usuário:</label>
-        <select id="tipo" name="tipo" required>
+        <select id="tipo" th:field="*{tipo}" required>
             <option value="">Selecione...</option>
-            <option value="Administrador" th:selected="${usuario.tipo == 'Administrador'}">Administrador</option>
-            <option value="Avaliador" th:selected="${usuario.tipo == 'Avaliador'}">Avaliador</option>
-            <option value="Aluno" th:selected="${usuario.tipo == 'Aluno'}">Aluno</option>
-            <option value="Professor" th:selected="${usuario.tipo == 'Professor'}">Professor</option>
+            <option value="Aluno">Aluno</option>
+            <option value="Professor">Professor</option>
         </select>
 
         <label for="cursoNome">Curso (se for aluno):</label>
-        <input type="text" id="cursoNome" name="cursoNome" th:value="${usuario.cursoNome}">
+        <input type="text" id="cursoNome" th:field="*{cursoNome}">
 
         <label for="departamento">Departamento (se for professor):</label>
-        <input type="text" id="departamento" name="departamento" th:value="${usuario.departamento}">
+        <input type="text" id="departamento" th:field="*{departamento}">
 
-        <button type="submit" class="btn">Salvar Usuário</button>
+        <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+            <a href="/usuarios" class="btn">Voltar</a>
+            <button type="submit" class="btn">Salvar Usuário</button>
+        </div>
     </form>
+
 </section>
+
+<div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+<div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
 <footer>
     <p>&copy; 2025 UEL - Todos os direitos reservados.</p>

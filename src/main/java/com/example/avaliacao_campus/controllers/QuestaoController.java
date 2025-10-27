@@ -22,14 +22,14 @@ public class QuestaoController {
     }
 
     @GetMapping("")
-    public String listarTodos(Model model) {
+    public String listarTodas(Model model) {
         List<Questao> questoes = questaoService.buscarTodos();
         model.addAttribute("questoes", questoes);
         return "questoes/index";
     }
 
     @GetMapping("/novo")
-    public String exibirFormulario(Model model) {
+    public String novo(Model model) {
         model.addAttribute("questao", new Questao());
         return "questoes/formulario";
     }
@@ -39,12 +39,41 @@ public class QuestaoController {
         try {
             questaoService.salvar(questao);
             redirectAttributes.addFlashAttribute("mensagem", "Questão cadastrada com sucesso!");
-            return "redirect:/questoes/";
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/questoes";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao salvar questão: " + e.getMessage());
             return "redirect:/questoes/novo";
         }
     }
+
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Questao questao = questaoService.buscarPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Questão não encontrada"));
+            model.addAttribute("questao", questao);
+            return "questoes/formulario";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/questoes";
+        }
+    }
+
+    @PostMapping("/editar/{id}")
+    public String atualizar(@PathVariable Long id,
+                            @ModelAttribute Questao questao,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            questao.setIdQuestao(id);
+            questaoService.salvar(questao);
+            redirectAttributes.addFlashAttribute("mensagem", "Questão atualizada com sucesso!");
+            return "redirect:/questoes";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Erro ao atualizar questão: " + e.getMessage());
+            return "redirect:/questoes/editar/" + id;
+        }
+    }
+
 
     @GetMapping("/deletar/{id}")
     public String deletar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
@@ -54,13 +83,6 @@ public class QuestaoController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao deletar a questão.");
         }
-        return "redirect:/questoes/";
-    }
-
-    @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Long id, Model model) {
-        Questao questao = questaoService.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Questão não encontrada"));
-        model.addAttribute("questao", questao);
-        return "questoes/formulario";
+        return "redirect:/questoes";
     }
 }

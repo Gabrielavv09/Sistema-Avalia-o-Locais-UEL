@@ -29,22 +29,28 @@
 </section>
 
 <section class="locais-form">
-    <form th:action="@{/locais/salvar}" method="post">
+    <form th:action="${local.idLocal} != null ? @{'/locais/editar/' + ${local.idLocal}} : @{/locais/salvar}"
+          th:object="${local}"
+          method="post">
 
         <label for="nome">Nome do Local:</label>
-        <input type="text" id="nome" name="nome" th:value="${local.nome}" required>
+        <input type="text" id="nome" th:field="*{nome}" required>
 
         <label for="localizacao">Localização:</label>
-        <input type="text" id="localizacao" name="localizacao" th:value="${local.localizacao}" required>
+        <input type="text" id="localizacao" th:field="*{localizacao}" required>
 
         <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" required th:text="${local.descricao}"></textarea>
+        <textarea id="descricao" th:field="*{descricao}" required></textarea>
 
         <label for="urlImage">URL da Imagem:</label>
-        <input type="text" id="urlImage" name="urlImage" th:value="${local.urlImage}">
+        <input type="text" id="urlImage" th:field="*{urlImage}">
 
-        <button type="submit" class="btn">Salvar Local</button>
+        <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+            <a href="/locais" class="btn">Voltar</a>
+            <button type="submit" class="btn">Salvar Local</button>
+        </div>
     </form>
+
 </section>
 
 <footer>

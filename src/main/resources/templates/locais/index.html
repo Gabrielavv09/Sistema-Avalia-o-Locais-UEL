@@ -33,13 +33,19 @@
     <h3>Locais Cadastrados</h3>
     <div class="locais-list">
         <div class="local-card" th:each="local : ${locais}">
+            <img th:if="${local.urlImage}" th:src="${local.urlImage}" alt="Imagem do Local" style="width: 100%; max-width: 300px; border-radius: 10px; margin-bottom: 1rem;">
+
             <h4 th:text="${local.nome}">Nome do Local</h4>
             <p th:text="${local.localizacao}">Localização</p>
-            <a th:href="@{/locais/editar/{id}(id=${local.idLocal})}" class="btn">Editar</a>
-            <a th:href="@{/locais/deletar/{id}(id=${local.idLocal})}" class="btn">Deletar</a>
+
+            <div style="display:flex; gap:1rem; margin-top:1rem;">
+                <a th:href="@{/locais/editar/{id}(id=${local.idLocal})}" class="btn">Editar</a>
+                <a th:href="@{/locais/deletar/{id}(id=${local.idLocal})}" class="btn">Deletar</a>
+            </div>
         </div>
     </div>
 </section>
+
 
 <footer>
     <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
