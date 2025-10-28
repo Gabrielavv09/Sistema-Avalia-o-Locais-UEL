@@ -6,4 +6,6 @@ import lombok.Data;
 public class NovaQuestaoDTO {
     private String texto;
     private String tipo;
+    private String opcoes;
 }
+
