@@ -4,10 +4,12 @@ import com.example.avaliacao_campus.dtos.AvaliacaoRequestDTO;
 import com.example.avaliacao_campus.dtos.NovaQuestaoDTO;
 import com.example.avaliacao_campus.models.*;
 import com.example.avaliacao_campus.repositories.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,34 +20,42 @@ public class AvaliacaoService {
     private final AvaliacaoQuestaoRepository avaliacaoQuestaoRepository;
     private final UsuarioRepository usuarioRepository;
     private final QuestaoRepository questaoRepository;
+    private final JdbcTemplate jdbc;
 
     public AvaliacaoService(
             AvaliacaoRepository avaliacaoRepository,
             AvaliacaoQuestaoRepository avaliacaoQuestaoRepository,
             UsuarioRepository usuarioRepository,
-            QuestaoRepository questaoRepository) {
+            QuestaoRepository questaoRepository,
+            JdbcTemplate jdbc) {
         this.avaliacaoRepository = avaliacaoRepository;
         this.avaliacaoQuestaoRepository = avaliacaoQuestaoRepository;
         this.usuarioRepository = usuarioRepository;
         this.questaoRepository = questaoRepository;
+        this.jdbc = jdbc;
     }
 
-    public java.util.List<Avaliacao> buscarTodas() {
+    public List<Avaliacao> buscarTodas() {
         return avaliacaoRepository.findAll();
     }
 
     @Transactional
     public Avaliacao registrarAvaliacao(AvaliacaoRequestDTO request) {
-        Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
-                .orElseGet(() -> {
-                    Usuario novo = new Usuario();
-                    novo.setNome(request.getNome());
-                    novo.setEmail(request.getEmail());
-                    novo.setTipo(request.getTipo());
-                    novo.setCursoNome(request.getCursoNome());
-                    novo.setDepartamento(request.getDepartamento());
-                    return usuarioRepository.save(novo);
-                });
+
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(request.getEmail());
+
+        Usuario usuario;
+        if (usuarioExistente.isPresent()) {
+            usuario = usuarioExistente.get(); // reaproveita o usuário existente
+        } else {
+            Usuario novo = new Usuario();
+            novo.setNome(request.getNome());
+            novo.setEmail(request.getEmail());
+            novo.setTipo(request.getTipo());
+            novo.setCursoNome(request.getCursoNome());
+            novo.setDepartamento(request.getDepartamento());
+            usuario = usuarioRepository.save(novo);
+        }
 
         var jaAvaliou = avaliacaoRepository.findByUsuario(usuario.getIdUsuario())
                 .stream()
@@ -73,16 +83,11 @@ public class AvaliacaoService {
             }
         }
 
-        if (request.getNovasQuestoes() != null) {
-            for (NovaQuestaoDTO nova : request.getNovasQuestoes()) {
-                Questao questao = new Questao();
-                questao.setTexto(nova.getTexto());
-                questao.setTipo(nova.getTipo());
-                questao.setIdUsuarioCriador(usuario.getIdUsuario());
-                questaoRepository.save(questao);
-            }
-        }
-
         return avaliacao;
     }
+
+    public List<Map<String, Object>> buscarTodasComUsuarioELocal() {
+        return avaliacaoRepository.buscarTodasComUsuarioELocal();
+    }
+
 }

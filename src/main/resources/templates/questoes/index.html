@@ -6,7 +6,7 @@
     <title>Questões - Campus UEL</title>
 
     <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
-    <link rel="stylesheet" th:href="@{./geral/style.css}">
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
 </head>
 <body>
 
@@ -29,14 +29,38 @@
 </section>
 
 <section class="questoes">
-    <h3>Questões Cadastradas </h3>
+    <h3>Questões Cadastradas</h3>
     <div class="questoes-list">
-        <div class="questao-card" th:each="questao : ${questoes}">
-            <h4 th:text="${questao.titulo}">Título da Questão</h4>
-            <p th:text="${questao.descricao}">Descrição da questão</p>
-            <a th:href="@{/questoes/editar/{id}(id=${questao.idQuestao})}" class="btn">Editar</a>
-            <a th:href="@{/questoes/deletar/{id}(id=${questao.idQuestao})}" class="btn">Deletar</a>
+
+        <div class="questao-card card-hover" th:each="questao : ${questoes}">
+            <h4 th:text="${questao.texto}">Texto da Questão</h4>
+            <p>
+                <strong>Tipo:</strong>
+                <span th:text="${questao.tipo == 'multipla' ? 'Múltipla Escolha' : (questao.tipo == 'padrao' ? 'Texto Aberto' : questao.tipo)}">
+                    tipo
+                </span>
+            </p>
+
+            <p th:if="${questao.opcoes != null}">
+                <strong>Opções:</strong>
+                <span th:text="${questao.opcoes}">-</span>
+            </p>
+
+<!--            <p>-->
+<!--                <strong>Criador:</strong>-->
+<!--                <span th:if="${questao.idUsuarioCriador != null and questao.idUsuarioCriador != 0}"-->
+<!--                      th:text="'Usuário #' + ${questao.idUsuarioCriador}"></span>-->
+<!--                <span th:unless="${questao.idUsuarioCriador != null}" style="color: gray;">-->
+<!--                    Questão Global-->
+<!--                </span>-->
+<!--            </p>-->
+
+            <div class="btn-group" style="margin-top: 10px;">
+                <a th:href="@{/questoes/editar/{id}(id=${questao.idQuestao})}" class="btn">Editar</a>
+                <a th:href="@{/questoes/deletar/{id}(id=${questao.idQuestao})}" class="btn">Deletar</a>
+            </div>
         </div>
+
     </div>
 </section>
 

@@ -31,7 +31,7 @@
 <section class="usuarios">
     <h3>Usuários Cadastrados</h3>
     <div class="usuarios-list">
-        <div class="usuario-card" th:each="usuario : ${usuarios}">
+        <div class="usuario-card card-hover" th:each="usuario : ${usuarios}">
             <h4 th:text="${usuario.nome}">Nome do Usuário</h4>
             <p th:text="${usuario.email}">Email</p>
             <a th:href="@{/usuarios/editar/{id}(id=${usuario.idUsuario})}" class="btn">Editar</a>

@@ -25,28 +25,24 @@ public class QuestaoService {
     }
 
     public List<Questao> buscarPorTipo(String tipo) {
-        if (tipo == null || (!tipo.equalsIgnoreCase("padrao") && !tipo.equalsIgnoreCase("personalizada"))) {
-            throw new IllegalArgumentException("Erro: O tipo de questão deve ser 'padrao' ou 'personalizada'.");
+        if (tipo == null || (!tipo.equalsIgnoreCase("padrao") && !tipo.equalsIgnoreCase("multipla"))) {
+            throw new IllegalArgumentException("Erro: O tipo de questão deve ser 'padrao' ou 'multipla'.");
         }
         return questaoRepository.findByTipo(tipo.toLowerCase());
     }
 
     public Questao salvar(Questao questao) {
-        // Validação do tipo
         String tipo = questao.getTipo();
-        if (tipo == null || (!tipo.equalsIgnoreCase("padrao") && !tipo.equalsIgnoreCase("personalizada"))) {
-            throw new IllegalArgumentException("Erro: O tipo de questão deve ser 'padrao' ou 'personalizada'.");
+        if (tipo == null || (!tipo.equalsIgnoreCase("padrao") && !tipo.equalsIgnoreCase("multipla"))) {
+            throw new IllegalArgumentException("Erro: O tipo de questão deve ser 'padrao' ou 'multipla'.");
         }
         questao.setTipo(tipo.toLowerCase());
 
-        // Validação de criador conforme o tipo
         if ("padrao".equalsIgnoreCase(questao.getTipo())) {
             questao.setIdUsuarioCriador(null);
-        } else if (questao.getIdUsuarioCriador() == null) {
-            throw new IllegalArgumentException("Erro: Questão personalizada deve ter um ID de usuário criador.");
+            questao.setOpcoes(null);
         }
 
-        // Decide entre inserir e atualizar
         if (questao.getIdQuestao() == null) {
             questaoRepository.save(questao);
         } else {

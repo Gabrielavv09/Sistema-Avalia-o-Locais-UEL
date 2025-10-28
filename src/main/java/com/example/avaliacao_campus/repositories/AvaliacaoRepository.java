@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class AvaliacaoRepository {
@@ -64,4 +65,32 @@ public class AvaliacaoRepository {
     public int delete(Long id) {
         return jdbc.update("DELETE FROM avaliacao WHERE id_avaliacao=?", id);
     }
+
+    public List<Map<String, Object>> buscarTodasComUsuarioELocal() {
+        String sql = """
+        SELECT 
+            a.id_avaliacao,
+            a.data_avaliacao,
+            u.nome AS usuario_nome,
+            l.nome AS local_nome,
+            l.url_image AS local_imagem,
+            COALESCE(
+                (SELECT aq.valor::numeric
+                 FROM avaliacao_questao aq
+                 JOIN questao q ON q.id_questao = aq.id_questao
+                 WHERE aq.id_avaliacao = a.id_avaliacao
+                   AND q.texto ILIKE '%%qual a sua nota geral%%'
+                 LIMIT 1), 
+                NULL
+            ) AS nota_geral
+        FROM avaliacao a
+        JOIN usuario u ON u.id_usuario = a.id_usuario
+        JOIN localcampus l ON l.id_local = a.id_local
+        ORDER BY a.data_avaliacao DESC
+        LIMIT 10
+    """;
+
+        return jdbc.queryForList(sql);
+    }
+
 }

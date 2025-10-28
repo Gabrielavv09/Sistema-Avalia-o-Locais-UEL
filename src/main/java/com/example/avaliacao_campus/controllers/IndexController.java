@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class IndexController {
@@ -19,8 +20,9 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(Model model) {
-        List<Avaliacao> avaliacoes = avaliacaoService.buscarTodas();
+        List<Map<String, Object>> avaliacoes = avaliacaoService.buscarTodasComUsuarioELocal();
         model.addAttribute("avaliacoes", avaliacoes);
         return "index";
     }
+
 }

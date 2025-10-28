@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao Sistema de Avaliação</title>
-
+    <title>🏫 Campus UEL - Avaliações</title>
     <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
 
-    <link rel="stylesheet" th:href="@{./geral/style.css}">
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
+    <style>
+
+    </style>
 </head>
+
 <body>
 
 <nav>
@@ -16,6 +19,7 @@
         <h1>Campus UEL</h1>
     </div>
     <ul class="nav-links">
+        <li><a th:href="@{/avaliacoes/form}">Nova Avaliação</a></li>
         <li><a th:href="@{/usuarios}">Usuários</a></li>
         <li><a th:href="@{/locais}">Locais</a></li>
         <li><a th:href="@{/questoes}">Questões</a></li>
@@ -23,23 +27,50 @@
 </nav>
 
 <section class="hero">
-    <h2>Faça sua avaliação dos locais do campus 🌟</h2>
+    <h2>💚 Avalie os Espaços da Universidade</h2>
     <p>Compartilhe sua experiência sobre os espaços da Universidade Estadual de Londrina.</p>
-    <a href="/avaliacoes/form" class="btn">Cadastrar Avaliação</a>
+    <a th:href="@{/avaliacoes/form}" class="btn">Fazer Nova Avaliação</a>
 </section>
 
 <section class="avaliacoes">
     <h3>Últimas Avaliações</h3>
+
     <div class="avaliacoes-list">
-        <div class="avaliacao-card" th:each="avaliacao : ${avaliacoes}">
-            <h4 th:text="${avaliacao.idLocal}">Local</h4>
-            <p th:text="${avaliacao.dataAvaliacao}">Data da Avaliação</p>
+
+        <div th:if="${avaliacoes != null and !avaliacoes.isEmpty()}"
+             th:each="av : ${avaliacoes}"
+             class="avaliacao-card">
+
+            <img th:if="${av['local_imagem'] != null}"
+                 th:src="${av['local_imagem']}"
+                 class="avaliacao-img"
+                 alt="Foto do local">
+
+            <img th:if="${av['local_imagem'] == null}"
+                 th:src="@{/geral/local-placeholder.jpg}"
+                 class="avaliacao-img"
+                 alt="Foto padrão">
+
+            <div class="avaliacao-content">
+                <h4 th:text="${av['local_nome']}">Nome do Local</h4>
+                <p class="avaliacao-meta">
+                    Avaliado por <span th:text="${av['usuario_nome']}">Usuário</span><br>
+                    em <span th:text="${#dates.format(av['data_avaliacao'], 'dd/MM/yyyy')}">00/00/0000</span>
+                </p>
+                <p th:if="${av['nota_geral'] != null}" class="avaliacao-meta" style="margin-top: 0.5rem;">
+                    ⭐ Nota geral: <span th:text="${av['nota_geral']}">0</span>/5
+                </p>
+            </div>
         </div>
+
+        <p th:if="${avaliacoes == null or avaliacoes.isEmpty()}"
+           style="text-align:center; color:gray; margin-top:1rem;">
+            Nenhuma avaliação registrada ainda 💭
+        </p>
     </div>
+
 </section>
 
-<footer>
-    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
-</footer>
+<footer><p>&copy; 2025 UEL - Todos os direitos reservados.</p></footer>
 </body>
 </html>

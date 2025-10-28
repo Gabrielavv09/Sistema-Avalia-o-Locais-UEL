@@ -26,7 +26,11 @@ public class QuestaoRepository {
             q.setIdQuestao(rs.getLong("id_questao"));
             q.setTexto(rs.getString("texto"));
             q.setTipo(rs.getString("tipo"));
-            q.setIdUsuarioCriador(rs.getLong("id_usuario_criador"));
+            q.setOpcoes(rs.getString("opcoes"));
+
+            Object obj = rs.getObject("id_usuario_criador");
+            q.setIdUsuarioCriador(obj != null ? ((Number) obj).longValue() : null);
+
             return q;
         }
     };
@@ -36,28 +40,33 @@ public class QuestaoRepository {
     }
 
     public Optional<Questao> findById(Long id) {
-        return jdbc.query("SELECT * FROM questao WHERE id_questao=?", MAPPER, id).stream().findFirst();
+        return jdbc.query("SELECT * FROM questao WHERE id_questao = ?", MAPPER, id).stream().findFirst();
     }
 
     public List<Questao> findByTipo(String tipo) {
-        return jdbc.query("SELECT * FROM questao WHERE tipo=?", MAPPER, tipo);
-    }
-
-    public List<Questao> findByUsuarioCriador(Long idUsuario) {
-        return jdbc.query("SELECT * FROM questao WHERE id_usuario_criador=?", MAPPER, idUsuario);
+        return jdbc.query("SELECT * FROM questao WHERE tipo = ?", MAPPER, tipo);
     }
 
     public int save(Questao q) {
-        String sql = "INSERT INTO questao (texto, tipo, id_usuario_criador) VALUES (?, ?, ?)";
-        return jdbc.update(sql, q.getTexto(), q.getTipo(), q.getIdUsuarioCriador());
+        String sql = "INSERT INTO questao (texto, tipo, opcoes, id_usuario_criador) VALUES (?, ?, ?, ?)";
+        return jdbc.update(sql,
+                q.getTexto(),
+                q.getTipo(),
+                q.getOpcoes(),
+                q.getIdUsuarioCriador());
     }
 
     public int update(Questao q) {
-        String sql = "UPDATE questao SET texto=?, tipo=?, id_usuario_criador=? WHERE id_questao=?";
-        return jdbc.update(sql, q.getTexto(), q.getTipo(), q.getIdUsuarioCriador(), q.getIdQuestao());
+        String sql = "UPDATE questao SET texto = ?, tipo = ?, opcoes = ?, id_usuario_criador = ? WHERE id_questao = ?";
+        return jdbc.update(sql,
+                q.getTexto(),
+                q.getTipo(),
+                q.getOpcoes(),
+                q.getIdUsuarioCriador(),
+                q.getIdQuestao());
     }
 
     public int delete(Long id) {
-        return jdbc.update("DELETE FROM questao WHERE id_questao=?", id);
+        return jdbc.update("DELETE FROM questao WHERE id_questao = ?", id);
     }
 }

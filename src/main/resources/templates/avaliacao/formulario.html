@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💬 Nova Avaliação - Campus UEL</title>
+
+    <link rel="icon"
+          href="data:image/svg+xml;charset=utf-8,
+          <svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'>
+              <text y='15' font-size='14'>💚</text>
+          </svg>">
     <link rel="stylesheet" th:href="@{/geral/style.css}">
+
     <script>
         function adicionarQuestao() {
             const container = document.getElementById('novas-questoes');
@@ -13,26 +20,37 @@
             const bloco = document.createElement('div');
             bloco.classList.add('nova-questao');
             bloco.innerHTML = `
-                <label>Texto da Questão:</label>
-                <input type="text" name="novasQuestoes[${index}].texto" required>
+                <hr style="margin: 1rem 0;">
+                <label>🆕 Nova Questão ${index + 1}</label>
+                <input type="text" name="novasQuestoes[${index}].texto" placeholder="Texto da nova questão" required>
 
                 <label>Tipo:</label>
-                <select name="novasQuestoes[${index}].tipo" required>
-                    <option value="Dissertativa">Dissertativa</option>
-                    <option value="Escala">Escala</option>
-                    <option value="Múltipla Escolha">Múltipla Escolha</option>
+                <select name="novasQuestoes[${index}].tipo" onchange="toggleOpcoes(this, ${index})">
+                    <option value="padrao">Dissertativa</option>
+                    <option value="multipla">Múltipla escolha</option>
                 </select>
+
+                <div id="opcoes-${index}" style="display:none; margin-top:0.5rem;">
+                    <label>Opções (se múltipla escolha)</label>
+                    <small>Separe as opções por vírgula (,)</small>
+                    <input type="text" name="novasQuestoes[${index}].opcoes" placeholder="Ex: Ruim,Razoável,Bom,Excelente">
+                </div>
             `;
             container.appendChild(bloco);
         }
+
+        function toggleOpcoes(select, index) {
+            const div = document.getElementById(`opcoes-${index}`);
+            div.style.display = select.value === 'multipla' ? 'block' : 'none';
+        }
     </script>
 </head>
-<body>
 
+<body>
 <nav>
     <div class="logo"><h1>Campus UEL</h1></div>
     <ul class="nav-links">
-        <li><a th:href="@{/}">Início</a></li>
+        <li><a th:href="@{/}">Tela inicial</a></li>
         <li><a th:href="@{/usuarios}">Usuários</a></li>
         <li><a th:href="@{/locais}">Locais</a></li>
         <li><a th:href="@{/questoes}">Questões</a></li>
@@ -40,53 +58,89 @@
 </nav>
 
 <section class="avaliacao-form">
-    <h2>💬 Avaliação do Local</h2>
-    <form th:action="@{/avaliacoes/registrar}" method="post">
+    <h2>💬 Nova Avaliação</h2>
+    <p>Preencha os campos abaixo para registrar sua avaliação de um local do campus.</p>
+
+    <form th:action="@{/avaliacoes/registrar}" th:object="${avaliacaoRequest}" method="post">
 
         <h3>👤 Informações do Avaliador</h3>
+
         <label for="nome">Nome:</label>
-        <input id="nome" name="nome" required>
+        <input id="nome" type="text" th:field="*{nome}" required>
 
         <label for="email">E-mail:</label>
-        <input id="email" name="email" type="email" required>
+        <input id="email" type="email" th:field="*{email}" required>
 
         <label for="tipo">Tipo:</label>
-        <select id="tipo" name="tipo" required>
+        <select id="tipo" th:field="*{tipo}" required>
             <option value="">Selecione...</option>
-            <option value="Aluno">Aluno</option>
-            <option value="Professor">Professor</option>
+            <option value="aluno">Aluno</option>
+            <option value="professor">Professor</option>
         </select>
 
         <label for="cursoNome">Curso (se aluno):</label>
-        <input id="cursoNome" name="cursoNome">
+        <input id="cursoNome" type="text" th:field="*{cursoNome}">
 
-        <label for="departamento">Departamento</label>
-        <input id="departamento" name="departamento">
+        <label for="departamento">Departamento:</label>
+        <input id="departamento" type="text" th:field="*{departamento}">
 
         <h3>📍 Local Avaliado</h3>
-        <select id="local" name="idLocal" required>
+        <select id="local" th:field="*{idLocal}" required>
             <option value="">Selecione o local...</option>
-            <option th:each="local : ${locais}" th:value="${local.idLocal}" th:text="${local.nome}"></option>
+            <option th:each="local : ${locais}"
+                    th:value="${local.idLocal}"
+                    th:text="${local.nome}"></option>
         </select>
 
-        <div class="questoes">
-            <h4>🧩 Questões Padrão</h4>
-            <div th:each="questao : ${questoesPadrao}">
-                <label th:text="${questao.texto}"></label>
-                <input type="text" th:name="'respostas[' + ${questao.idQuestao} + ']'" required>
+        <h3>🧩 Questões Abertas</h3>
+        <div th:each="questao : ${questoesPadrao}">
+            <label th:text="${questao.texto}"></label>
+
+            <div th:if="${questao.tipo == 'multipla'}">
+                <select th:name="${'respostas[' + questao.idQuestao + ']'}">
+                    <option value="">Selecione...</option>
+                    <option th:each="opt : ${(questao.opcoes != null) ? questao.opcoes.split(',') : #lists.create()}"
+                            th:value="${opt.trim()}"
+                            th:text="${opt.trim()}"></option>
+                </select>
             </div>
 
-            <h4>💡 Questões Personalizadas Existentes</h4>
-            <div th:each="questao : ${questoesPersonalizadas}">
-                <label th:text="${questao.texto}"></label>
-                <input type="text" th:name="'respostas[' + ${questao.idQuestao} + ']'" required>
+            <div th:if="${questao.tipo != 'multipla'}">
+                <input type="text"
+                       th:name="${'respostas[' + questao.idQuestao + ']'}"
+                       placeholder="Sua resposta">
             </div>
-
-            <div id="novas-questoes"></div>
-            <button type="button" class="btn" onclick="adicionarQuestao()">Adicionar Questão</button>
         </div>
 
-        <button type="submit" class="btn">Salvar Avaliação</button>
+        <h3>💡 Questões de Múltipla Escolha</h3>
+        <div th:each="questao : ${questoesPersonalizadas}">
+            <label th:text="${questao.texto}"></label>
+
+            <div th:if="${questao.tipo == 'multipla'}">
+                <select th:name="${'respostas[' + questao.idQuestao + ']'}">
+                    <option value="">Selecione...</option>
+                    <option th:each="opt : ${(questao.opcoes != null) ? questao.opcoes.split(',') : #lists.create()}"
+                            th:value="${opt.trim()}"
+                            th:text="${opt.trim()}"></option>
+                </select>
+            </div>
+
+            <div th:if="${questao.tipo != 'multipla'}">
+                <input type="text"
+                       th:name="${'respostas[' + questao.idQuestao + ']'}"
+                       placeholder="Sua resposta">
+            </div>
+        </div>
+
+<!--        <h3>🆕 Adicionar novas questões</h3>-->
+<!--        <div id="novas-questoes"></div>-->
+
+<!--        <button type="button" class="btn" onclick="adicionarQuestao()">+ Nova Questão</button>-->
+
+        <div style="margin-top: 2rem; display: flex; justify-content: space-between;">
+            <a href="/" class="btn">Cancelar</a>
+            <button type="submit" class="btn">Salvar Avaliação</button>
+        </div>
     </form>
 </section>
 

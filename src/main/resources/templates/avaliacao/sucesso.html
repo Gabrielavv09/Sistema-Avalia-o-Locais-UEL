@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>✅ Avaliação Registrada</title>
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
+</head>
+<body>
+
+<nav>
+    <div class="logo"><h1>Campus UEL</h1></div>
+    <ul class="nav-links">
+        <li><a th:href="@{/}">Início</a></li>
+        <li><a th:href="@{/avaliacoes/form}">Nova Avaliação</a></li>
+        <li><a th:href="@{/questoes}">Questões</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <h2>🎉 Avaliação registrada com sucesso!</h2>
+    <p>Obrigado por contribuir com o Campus UEL 💚</p>
+
+    <div style="margin-top: 2rem;">
+        <a href="/" class="btn">Voltar à Página Inicial</a>
+        <a href="/avaliacoes/form" class="btn">Fazer nova avaliação</a>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>

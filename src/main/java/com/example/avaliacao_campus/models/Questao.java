@@ -13,9 +13,6 @@ public class Questao {
 
     private String texto;
     private String tipo;
-
-    // Chave Estrangeira (FK) para a tabela USUARIO
+    private String opcoes;
     private Long idUsuarioCriador;
-
-
 }

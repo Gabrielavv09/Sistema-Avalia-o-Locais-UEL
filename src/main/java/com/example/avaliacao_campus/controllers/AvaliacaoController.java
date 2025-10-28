@@ -37,7 +37,8 @@ public class AvaliacaoController {
     @GetMapping("/form")
     public String exibirFormulario(Model model) {
         List<Questao> questoesPadrao = questaoService.buscarPorTipo("padrao");
-        List<Questao> questoesPersonalizadas = questaoService.buscarPorTipo("personalizada");
+        List<Questao> questoesPersonalizadas = questaoService.buscarPorTipo("multipla");
+
         List<LocalCampus> locais = localCampusService.buscarTodos();
 
         model.addAttribute("questoesPadrao", questoesPadrao);
@@ -66,4 +67,5 @@ public class AvaliacaoController {
     public String sucesso() {
         return "avaliacao/sucesso";
     }
+
 }
