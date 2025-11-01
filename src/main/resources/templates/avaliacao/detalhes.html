@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Avaliação - Campus UEL</title>
+    <link rel="icon" href="data:image/svg+xml;charset=utf-8,
+        <svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'>
+            <text y='15' font-size='14'>💚</text>
+        </svg>">
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
+</head>
+<body>
+<nav>
+    <div class="logo"><h1>Campus UEL</h1></div>
+    <ul class="nav-links">
+        <li><a th:href="@{/}">Tela inicial</a></li>
+        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+        <li><a th:href="@{/questoes}">Questões</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <h2>Detalhes da Avaliação</h2>
+    <p><strong>👤 Avaliador:</strong> <span th:text="${usuarioNome}">Usuário</span></p>
+    <p><strong>📅 Data:</strong> <span th:text="${avaliacao.dataAvaliacao}">00/00/0000</span></p>
+    <p><strong>📍 Local:</strong> <span th:text="${localNome}">Local</span></p>
+    <p><strong>⭐ Nota geral:</strong> <span th:text="${notaGeral != null ? notaGeral : 'Não informada'}">0</span>/5</p>
+</section>
+
+<section class="avaliacao-form">
+
+
+    <h3>Respostas do Usuário</h3>
+    <div th:if="${respostas != null and !respostas.isEmpty()}">
+        <ul>
+            <li th:each="r : ${respostas}">
+                <strong th:text="${r['questao_texto']}">Questão</strong>:
+                <span th:text="${r['resposta_valor']}">Resposta</span>
+            </li>
+        </ul>
+    </div>
+
+    <p th:if="${respostas == null or respostas.isEmpty()}" style="color:gray;">
+        Nenhuma resposta encontrada.
+    </p>
+
+    <div style="margin-top: 2rem;">
+        <a th:href="@{/}" class="btn">⬅ Voltar</a>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
+</footer>
+</body>
+</html>

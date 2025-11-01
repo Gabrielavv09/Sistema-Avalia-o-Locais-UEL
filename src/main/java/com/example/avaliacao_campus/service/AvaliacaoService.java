@@ -1,7 +1,6 @@
 package com.example.avaliacao_campus.service;
 
 import com.example.avaliacao_campus.dtos.AvaliacaoRequestDTO;
-import com.example.avaliacao_campus.dtos.NovaQuestaoDTO;
 import com.example.avaliacao_campus.models.*;
 import com.example.avaliacao_campus.repositories.*;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,6 +38,10 @@ public class AvaliacaoService {
         return avaliacaoRepository.findAll();
     }
 
+    public Optional<Avaliacao> findById(Long id) {
+        return avaliacaoRepository.findById(id);
+    }
+
     @Transactional
     public Avaliacao registrarAvaliacao(AvaliacaoRequestDTO request) {
 
@@ -46,7 +49,7 @@ public class AvaliacaoService {
 
         Usuario usuario;
         if (usuarioExistente.isPresent()) {
-            usuario = usuarioExistente.get(); // reaproveita o usuário existente
+            usuario = usuarioExistente.get();
         } else {
             Usuario novo = new Usuario();
             novo.setNome(request.getNome());
@@ -88,6 +91,17 @@ public class AvaliacaoService {
 
     public List<Map<String, Object>> buscarTodasComUsuarioELocal() {
         return avaliacaoRepository.buscarTodasComUsuarioELocal();
+    }
+
+    public List<Map<String, Object>> buscarRespostasPorAvaliacao(Long idAvaliacao) {
+        String sql = """
+                SELECT q.texto AS questao, aq.valor
+                FROM avaliacao_questao aq
+                JOIN questao q ON aq.id_questao = q.id_questao
+                WHERE aq.id_avaliacao = ?
+                """;
+
+        return jdbc.queryForList(sql, idAvaliacao);
     }
 
 }

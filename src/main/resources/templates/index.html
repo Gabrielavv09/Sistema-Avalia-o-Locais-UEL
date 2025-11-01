@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏫 Campus UEL - Avaliações</title>
+    <title>Campus UEL - Avaliações</title>
     <link rel="icon" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='17' height='18'><text y='15' font-size='14'>💚</text></svg>">
-
     <link rel="stylesheet" th:href="@{/geral/style.css}">
-    <style>
-
-    </style>
 </head>
 
 <body>
-
 <nav>
     <div class="logo">
         <h1>Campus UEL</h1>
@@ -38,29 +33,35 @@
     <div class="avaliacoes-list">
 
         <div th:if="${avaliacoes != null and !avaliacoes.isEmpty()}"
-             th:each="av : ${avaliacoes}"
-             class="avaliacao-card">
+             th:each="av : ${avaliacoes}">
 
-            <img th:if="${av['local_imagem'] != null}"
-                 th:src="${av['local_imagem']}"
-                 class="avaliacao-img"
-                 alt="Foto do local">
+            <a th:href="@{'/avaliacoes/' + ${av['id_avaliacao']}}" class="avaliacao-card-link">
+                <div class="avaliacao-card">
 
-            <img th:if="${av['local_imagem'] == null}"
-                 th:src="@{/geral/local-placeholder.jpg}"
-                 class="avaliacao-img"
-                 alt="Foto padrão">
+                    <img th:if="${av['local_imagem'] != null}"
+                         th:src="${av['local_imagem']}"
+                         class="avaliacao-img"
+                         alt="Foto do local">
 
-            <div class="avaliacao-content">
-                <h4 th:text="${av['local_nome']}">Nome do Local</h4>
-                <p class="avaliacao-meta">
-                    Avaliado por <span th:text="${av['usuario_nome']}">Usuário</span><br>
-                    em <span th:text="${#dates.format(av['data_avaliacao'], 'dd/MM/yyyy')}">00/00/0000</span>
-                </p>
-                <p th:if="${av['nota_geral'] != null}" class="avaliacao-meta" style="margin-top: 0.5rem;">
-                    ⭐ Nota geral: <span th:text="${av['nota_geral']}">0</span>/5
-                </p>
-            </div>
+                    <img th:if="${av['local_imagem'] == null}"
+                         th:src="@{/geral/local-placeholder.jpg}"
+                         class="avaliacao-img"
+                         alt="Foto padrão">
+
+                    <div class="avaliacao-content">
+                        <h4 th:text="${av['local_nome']}">Nome do Local</h4>
+                        <p class="avaliacao-meta">
+                            Avaliado por <span th:text="${av['usuario_nome']}">Usuário</span><br>
+                            em <span th:text="${#dates.format(av['data_avaliacao'], 'dd/MM/yyyy')}">00/00/0000</span>
+                        </p>
+                        <p th:if="${av['nota_geral'] != null}" class="avaliacao-meta" style="margin-top: 0.5rem;">
+                            ⭐ Nota geral: <span th:text="${av['nota_geral']}">0</span>/5
+                        </p>
+                    </div>
+
+                </div>
+            </a>
+
         </div>
 
         <p th:if="${avaliacoes == null or avaliacoes.isEmpty()}"

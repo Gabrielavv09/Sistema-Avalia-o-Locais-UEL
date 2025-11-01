@@ -34,6 +34,7 @@
         <div class="usuario-card card-hover" th:each="usuario : ${usuarios}">
             <h4 th:text="${usuario.nome}">Nome do Usuário</h4>
             <p th:text="${usuario.email}">Email</p>
+            <p th:text="${usuario.departamento}">Departamento</p>
             <a th:href="@{/usuarios/editar/{id}(id=${usuario.idUsuario})}" class="btn">Editar</a>
             <a th:href="@{/usuarios/deletar/{id}(id=${usuario.idUsuario})}" class="btn">Deletar</a>
         </div>

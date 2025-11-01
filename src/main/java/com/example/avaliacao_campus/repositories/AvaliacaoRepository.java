@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class AvaliacaoRepository {
@@ -28,15 +29,21 @@ public class AvaliacaoRepository {
         });
     }
 
-    public List<Avaliacao> findByUsuario(Long idUsuario) {
-        return jdbc.query("SELECT * FROM avaliacao WHERE id_usuario=?", (rs, rowNum) -> {
+    public Optional<Avaliacao> findById(Long id) {
+        String sql = """
+        SELECT * FROM avaliacao WHERE id_avaliacao = ?
+    """;
+
+        List<Avaliacao> resultados = jdbc.query(sql, (rs, rowNum) -> {
             Avaliacao a = new Avaliacao();
             a.setIdAvaliacao(rs.getLong("id_avaliacao"));
             a.setIdUsuario(rs.getLong("id_usuario"));
             a.setIdLocal(rs.getLong("id_local"));
             a.setDataAvaliacao(rs.getDate("data_avaliacao").toLocalDate());
             return a;
-        }, idUsuario);
+        }, id);
+
+        return resultados.stream().findFirst();
     }
 
     public List<Avaliacao> findByLocal(Long idLocal) {
@@ -91,6 +98,22 @@ public class AvaliacaoRepository {
     """;
 
         return jdbc.queryForList(sql);
+    }
+
+    public List<Avaliacao> findByUsuario(Long idUsuario) {
+        String sql = """
+        SELECT * FROM avaliacao WHERE id_usuario = ?
+        ORDER BY data_avaliacao DESC
+    """;
+
+        return jdbc.query(sql, (rs, rowNum) -> {
+            Avaliacao a = new Avaliacao();
+            a.setIdAvaliacao(rs.getLong("id_avaliacao"));
+            a.setIdUsuario(rs.getLong("id_usuario"));
+            a.setIdLocal(rs.getLong("id_local"));
+            a.setDataAvaliacao(rs.getDate("data_avaliacao").toLocalDate());
+            return a;
+        }, idUsuario);
     }
 
 }

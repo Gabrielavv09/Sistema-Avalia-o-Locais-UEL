@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class AvaliacaoQuestaoRepository {
@@ -18,28 +19,41 @@ public class AvaliacaoQuestaoRepository {
         this.jdbc = jdbc;
     }
 
-    private static final RowMapper<AvaliacaoQuestao> MAPPER = new RowMapper<>() {
-        @Override
-        public AvaliacaoQuestao mapRow(ResultSet rs, int rowNum) throws SQLException {
-            AvaliacaoQuestao aq = new AvaliacaoQuestao();
-            aq.setIdAvaliacao(rs.getLong("id_avaliacao"));
-            aq.setIdQuestao(rs.getLong("id_questao"));
-            aq.setValor(rs.getString("valor"));
-            return aq;
-        }
-    };
-
-    public List<AvaliacaoQuestao> findByAvaliacao(Long idAvaliacao) {
-        return jdbc.query("SELECT * FROM avaliacao_questao WHERE id_avaliacao=?", MAPPER, idAvaliacao);
-    }
-
-    public int save(AvaliacaoQuestao aq) {
+    public void save(AvaliacaoQuestao aq) {
         String sql = "INSERT INTO avaliacao_questao (id_avaliacao, id_questao, valor) VALUES (?, ?, ?)";
-        return jdbc.update(sql, aq.getIdAvaliacao(), aq.getIdQuestao(), aq.getValor());
+        jdbc.update(sql, aq.getIdAvaliacao(), aq.getIdQuestao(), aq.getValor());
     }
 
-    public int delete(Long idAvaliacao, Long idQuestao) {
-        String sql = "DELETE FROM avaliacao_questao WHERE id_avaliacao=? AND id_questao=?";
-        return jdbc.update(sql, idAvaliacao, idQuestao);
+    // 🔍 Busca todas as respostas de uma avaliação, com o texto da questão
+    public List<Map<String, Object>> buscarRespostasPorAvaliacao(Long idAvaliacao) {
+        String sql = """
+            SELECT 
+                q.texto AS questao_texto,
+                q.tipo AS questao_tipo,
+                aq.valor AS resposta_valor
+            FROM avaliacao_questao aq
+            JOIN questao q ON q.id_questao = aq.id_questao
+            WHERE aq.id_avaliacao = ?
+            ORDER BY q.id_questao
+        """;
+        return jdbc.queryForList(sql, idAvaliacao);
+    }
+
+    // (opcional) buscar todas respostas de um usuário em todos os locais
+    public List<Map<String, Object>> buscarRespostasPorUsuario(Long idUsuario) {
+        String sql = """
+            SELECT 
+                l.nome AS local_nome,
+                q.texto AS questao_texto,
+                aq.valor AS resposta_valor,
+                a.data_avaliacao
+            FROM avaliacao_questao aq
+            JOIN avaliacao a ON a.id_avaliacao = aq.id_avaliacao
+            JOIN localcampus l ON l.id_local = a.id_local
+            JOIN questao q ON q.id_questao = aq.id_questao
+            WHERE a.id_usuario = ?
+            ORDER BY a.data_avaliacao DESC
+        """;
+        return jdbc.queryForList(sql, idUsuario);
     }
 }
