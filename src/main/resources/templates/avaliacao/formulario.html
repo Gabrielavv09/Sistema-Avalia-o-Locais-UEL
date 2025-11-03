@@ -97,7 +97,7 @@
             <label th:text="${questao.texto}"></label>
 
             <div th:if="${questao.tipo == 'multipla'}">
-                <select th:name="${'respostas[' + questao.idQuestao + ']'}">
+                <select th:name="${'respostas[' + questao.idQuestao + ']'}" required>
                     <option value="">Selecione...</option>
                     <option th:each="opt : ${(questao.opcoes != null) ? questao.opcoes.split(',') : #lists.create()}"
                             th:value="${opt.trim()}"
@@ -108,7 +108,7 @@
             <div th:if="${questao.tipo != 'multipla'}">
                 <input type="text"
                        th:name="${'respostas[' + questao.idQuestao + ']'}"
-                       placeholder="Sua resposta">
+                       placeholder="Sua resposta" required>
             </div>
         </div>
 
@@ -117,7 +117,7 @@
             <label th:text="${questao.texto}"></label>
 
             <div th:if="${questao.tipo == 'multipla'}">
-                <select th:name="${'respostas[' + questao.idQuestao + ']'}">
+                <select th:name="${'respostas[' + questao.idQuestao + ']'}" required>
                     <option value="">Selecione...</option>
                     <option th:each="opt : ${(questao.opcoes != null) ? questao.opcoes.split(',') : #lists.create()}"
                             th:value="${opt.trim()}"
@@ -128,7 +128,7 @@
             <div th:if="${questao.tipo != 'multipla'}">
                 <input type="text"
                        th:name="${'respostas[' + questao.idQuestao + ']'}"
-                       placeholder="Sua resposta">
+                       placeholder="Sua resposta" required>
             </div>
         </div>
 

@@ -81,8 +81,16 @@ public class AvaliacaoController {
         var local = localCampusService.buscarPorId(avaliacao.getIdLocal()).orElse(null);
 
         Double notaGeral = respostas.stream()
-                .filter(r -> r.get("questao_texto").toString().toLowerCase().contains("nota geral"))
-                .map(r -> Double.valueOf(r.get("resposta_valor").toString()))
+                .filter(r -> ((String) r.get("questao_texto")).toLowerCase().contains("nota geral"))
+                .map(r -> {
+                    String valor = (String) r.get("resposta_valor");
+                    if (valor != null && !valor.trim().isEmpty()) {
+                        return Double.valueOf(valor);
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(v -> v != null)
                 .findFirst()
                 .orElse(null);
 
