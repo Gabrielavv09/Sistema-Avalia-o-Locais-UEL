@@ -82,14 +82,18 @@ public class AvaliacaoRepository {
             l.nome AS local_nome,
             l.url_image AS local_imagem,
             COALESCE(
-                (SELECT aq.valor::numeric
-                 FROM avaliacao_questao aq
-                 JOIN questao q ON q.id_questao = aq.id_questao
-                 WHERE aq.id_avaliacao = a.id_avaliacao
-                   AND q.texto ILIKE '%%qual a sua nota geral%%'
-                 LIMIT 1), 
-                NULL
-            ) AS nota_geral
+                               (SELECT
+                                    CASE
+                                        WHEN trim(aq.valor) ~ '^[0-9]+(\\.[0-9]+)?$' THEN aq.valor::numeric
+                                        ELSE NULL
+                                    END
+                                FROM avaliacao_questao aq
+                                JOIN questao q ON q.id_questao = aq.id_questao
+                                WHERE aq.id_avaliacao = a.id_avaliacao
+                                  AND q.texto ILIKE '%qual a sua nota geral%'
+                                LIMIT 1),
+                               NULL
+                           ) AS nota_geral
         FROM avaliacao a
         JOIN usuario u ON u.id_usuario = a.id_usuario
         JOIN localcampus l ON l.id_local = a.id_local
