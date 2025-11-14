@@ -26,21 +26,3 @@ O sistema foi modelado para atender às seguintes entidades:
 4.  **Avaliação:** Registro da avaliação de um local por um usuário.
 5.  **Relatórios:** Geração de dados agregados, tabelas e gráficos.
 
----
-
-## ⚙️ Como Rodar o Projeto
-
-### Pré-requisitos
-1.  **Java JDK 17** ou superior.
-2.  **PostgreSQL** instalado e rodando na porta `5432`.
-3.  **IntelliJ IDEA**.
-
-### Configuração do Banco de Dados
-1.  Crie um novo banco de dados no pgAdmin com o nome: **`avaliacao_campus`**.
-2.  Execute o script SQL de criação das tabelas (disponível na pasta do projeto).
-3.  Ajuste o `application.properties` com suas credenciais do PostgreSQL (`username` e `password`).
-
-### Execução
-1.  Abra o projeto no IntelliJ IDEA.
-2.  Execute a classe principal `AvaliacaoCampusApplication.java`.
-3.  Acesse a rota inicial no seu navegador (com o sistema rodando): `http://localhost:8080/usuarios/cadastro`
