@@ -1,6 +1,7 @@
 package com.example.avaliacao_campus.service;
 
 import com.example.avaliacao_campus.dtos.AvaliacaoRequestDTO;
+import com.example.avaliacao_campus.dtos.RespostaDTO;
 import com.example.avaliacao_campus.models.*;
 import com.example.avaliacao_campus.repositories.*;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,20 +35,32 @@ public class AvaliacaoService {
         this.jdbc = jdbc;
     }
 
+    public List<Avaliacao> buscarTodas(String termo) {
+        if (termo == null || termo.trim().isEmpty()) {
+            return avaliacaoRepository.findAllWithNames();
+        } else {
+            return avaliacaoRepository.findByNomeLocal(termo);
+        }
+    }
+
     public List<Avaliacao> buscarTodas() {
-        return avaliacaoRepository.findAll();
+        return buscarTodas(null);
     }
 
     public Optional<Avaliacao> findById(Long id) {
         return avaliacaoRepository.findById(id);
     }
 
+    // O método que faltava
+    public List<Map<String, Object>> buscarTodasComUsuarioELocal() {
+        return avaliacaoRepository.buscarTodasComUsuarioELocal();
+    }
+
     @Transactional
     public Avaliacao registrarAvaliacao(AvaliacaoRequestDTO request) {
-
         Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(request.getEmail());
-
         Usuario usuario;
+
         if (usuarioExistente.isPresent()) {
             usuario = usuarioExistente.get();
         } else {
@@ -88,20 +101,4 @@ public class AvaliacaoService {
 
         return avaliacao;
     }
-
-    public List<Map<String, Object>> buscarTodasComUsuarioELocal() {
-        return avaliacaoRepository.buscarTodasComUsuarioELocal();
-    }
-
-    public List<Map<String, Object>> buscarRespostasPorAvaliacao(Long idAvaliacao) {
-        String sql = """
-                SELECT q.texto AS questao, aq.valor
-                FROM avaliacao_questao aq
-                JOIN questao q ON aq.id_questao = q.id_questao
-                WHERE aq.id_avaliacao = ?
-                """;
-
-        return jdbc.queryForList(sql, idAvaliacao);
-    }
-
 }

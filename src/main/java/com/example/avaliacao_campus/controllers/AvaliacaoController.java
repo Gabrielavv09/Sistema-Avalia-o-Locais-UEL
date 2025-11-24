@@ -1,6 +1,7 @@
 package com.example.avaliacao_campus.controllers;
 
 import com.example.avaliacao_campus.dtos.AvaliacaoRequestDTO;
+import com.example.avaliacao_campus.models.Avaliacao;
 import com.example.avaliacao_campus.models.LocalCampus;
 import com.example.avaliacao_campus.models.Questao;
 import com.example.avaliacao_campus.service.*;
@@ -36,18 +37,25 @@ public class AvaliacaoController {
         this.usuarioService = usuarioService;
     }
 
+    @GetMapping("/lista")
+    public String listarTodas(@RequestParam(value = "termo", required = false) String termo, Model model) {
+        List<Avaliacao> avaliacoes = avaliacaoService.buscarTodas(termo);
+        model.addAttribute("avaliacoes", avaliacoes);
+        model.addAttribute("termo", termo);
+        return "avaliacao/lista";
+    }
+
     @GetMapping("/form")
     public String exibirFormulario(Model model) {
+        // ... (código existente para montar o formulário) ...
         List<Questao> questoesPadrao = questaoService.buscarPorTipo("padrao");
         List<Questao> questoesPersonalizadas = questaoService.buscarPorTipo("multipla");
-
         List<LocalCampus> locais = localCampusService.buscarTodos();
 
         model.addAttribute("questoesPadrao", questoesPadrao);
         model.addAttribute("questoesPersonalizadas", questoesPersonalizadas);
         model.addAttribute("locais", locais);
         model.addAttribute("avaliacaoRequest", new AvaliacaoRequestDTO());
-
         return "avaliacao/formulario";
     }
 
@@ -55,9 +63,7 @@ public class AvaliacaoController {
     public String registrar(@ModelAttribute AvaliacaoRequestDTO request, RedirectAttributes attributes) {
         try {
             avaliacaoService.registrarAvaliacao(request);
-
             attributes.addFlashAttribute("mensagem", "Avaliação registrada com sucesso!");
-
             return "redirect:/avaliacoes/sucesso";
         } catch (IllegalArgumentException e) {
             attributes.addFlashAttribute("erro", e.getMessage());
@@ -72,35 +78,8 @@ public class AvaliacaoController {
 
     @GetMapping("/{id}")
     public String verDetalhes(@PathVariable Long id, Model model) {
-        var avaliacao = avaliacaoService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
-
-        var respostas = avaliacaoQuestaoService.buscarRespostasPorAvaliacao(id);
-
-        var usuario = usuarioService.buscarPorId(avaliacao.getIdUsuario()).orElse(null);
-        var local = localCampusService.buscarPorId(avaliacao.getIdLocal()).orElse(null);
-
-        Double notaGeral = respostas.stream()
-                .filter(r -> ((String) r.get("questao_texto")).toLowerCase().contains("nota geral"))
-                .map(r -> {
-                    String valor = (String) r.get("resposta_valor");
-                    if (valor != null && !valor.trim().isEmpty()) {
-                        return Double.valueOf(valor);
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(v -> v != null)
-                .findFirst()
-                .orElse(null);
-
+        var avaliacao = avaliacaoService.findById(id).orElseThrow();
         model.addAttribute("avaliacao", avaliacao);
-        model.addAttribute("usuarioNome", usuario != null ? usuario.getNome() : "Desconhecido");
-        model.addAttribute("localNome", local != null ? local.getNome() : "Desconhecido");
-        model.addAttribute("notaGeral", notaGeral);
-        model.addAttribute("respostas", respostas);
-
         return "avaliacao/detalhes";
     }
-
 }

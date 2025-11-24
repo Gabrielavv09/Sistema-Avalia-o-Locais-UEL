@@ -14,7 +14,7 @@
         <h1>Campus UEL</h1>
     </div>
     <ul class="nav-links">
-        <li><a th:href="@{/avaliacoes/form}">Nova Avaliação</a></li>
+        <li><a th:href="@{/}">Tela inicial</a></li>
         <li><a th:href="@{/usuarios}">Usuários</a></li>
         <li><a th:href="@{/locais}">Locais</a></li>
         <li><a th:href="@{/questoes}">Questões</a></li>
@@ -30,32 +30,39 @@
 <section class="avaliacoes">
     <h3>Últimas Avaliações</h3>
 
+    <form action="/" method="get" class="search-form" style="margin-bottom: 30px; display: flex; justify-content: center; gap: 10px;">
+        <input type="text" name="termo" placeholder="Buscar avaliações por local..." th:value="${termo}" style="padding: 10px; width: 300px; border: 1px solid #ccc; border-radius: 5px;">
+        <button type="submit" class="btn">Buscar</button>
+        <a href="/" class="btn" style="background-color: #6c757d; text-decoration: none; padding: 10px 20px; color: white; border-radius: 5px; line-height: 20px;">Limpar</a>
+    </form>
+
     <div class="avaliacoes-list">
 
-        <div th:if="${avaliacoes != null and !avaliacoes.isEmpty()}"
-             th:each="av : ${avaliacoes}">
+        <div th:if="${avaliacoes != null and !avaliacoes.isEmpty()}" th:each="av : ${avaliacoes}">
 
-            <a th:href="@{'/avaliacoes/' + ${av['id_avaliacao']}}" class="avaliacao-card-link">
+            <a th:href="@{'/avaliacoes/' + ${av.idAvaliacao}}" class="avaliacao-card-link">
                 <div class="avaliacao-card">
 
-                    <img th:if="${av['local_imagem'] != null}"
-                         th:src="${av['local_imagem']}"
+                    <img th:if="${av.imagemLocal != null and !av.imagemLocal.isEmpty()}"
+                         th:src="${av.imagemLocal}"
                          class="avaliacao-img"
                          alt="Foto do local">
 
-                    <img th:if="${av['local_imagem'] == null}"
+                    <img th:if="${av.imagemLocal == null or av.imagemLocal.isEmpty()}"
                          th:src="@{/geral/local-placeholder.jpg}"
                          class="avaliacao-img"
                          alt="Foto padrão">
 
                     <div class="avaliacao-content">
-                        <h4 th:text="${av['local_nome']}">Nome do Local</h4>
+                        <h4 th:text="${av.nomeLocal}">Nome do Local</h4>
+
                         <p class="avaliacao-meta">
-                            Avaliado por <span th:text="${av['usuario_nome']}">Usuário</span><br>
-                            em <span th:text="${#dates.format(av['data_avaliacao'], 'dd/MM/yyyy')}">00/00/0000</span>
+                            Avaliado por <span th:text="${av.nomeUsuario}">Usuário</span><br>
+                            em <span th:text="${#temporals.format(av.dataAvaliacao, 'dd/MM/yyyy')}">00/00/0000</span>
                         </p>
-                        <p th:if="${av['nota_geral'] != null}" class="avaliacao-meta" style="margin-top: 0.5rem;">
-                            ⭐ Nota geral: <span th:text="${av['nota_geral']}">0</span>/5
+
+                        <p class="avaliacao-meta" style="margin-top: 0.5rem; color: green; font-size: 0.9em;">
+                            (Clique para ver detalhes e notas)
                         </p>
                     </div>
 
@@ -64,10 +71,10 @@
 
         </div>
 
-        <p th:if="${avaliacoes == null or avaliacoes.isEmpty()}"
-           style="text-align:center; color:gray; margin-top:1rem;">
-            Nenhuma avaliação registrada ainda 💭
-        </p>
+        <div th:if="${avaliacoes == null or avaliacoes.isEmpty()}"
+             style="text-align:center; color:gray; margin-top:1rem; width: 100%;">
+            <p>Nenhuma avaliação encontrada para este local.</p>
+        </div>
     </div>
 
 </section>

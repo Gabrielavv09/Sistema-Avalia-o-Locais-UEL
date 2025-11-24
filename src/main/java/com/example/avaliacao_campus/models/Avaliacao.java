@@ -11,4 +11,7 @@ public class Avaliacao {
     private Long idLocal;
     private LocalDate dataAvaliacao;
 
+    private String nomeUsuario;
+    private String nomeLocal;
+    private String imagemLocal;
 }

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisar Avaliações - Campus UEL</title>
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <h1>Campus UEL</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a th:href="@{/}">Tela inicial</a></li>
+        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+        <li><a th:href="@{/questoes}">Questões</a></li>
+        <li><a th:href="@{/avaliacoes/lista}">Avaliações</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <h2>Pesquisar Avaliações 🔎</h2>
+    <p>Busque avaliações pelo nome do local (ex: RU, Biblioteca).</p>
+    <a href="/avaliacoes/form" class="btn">Nova Avaliação</a>
+</section>
+
+<section class="locais"> <form action="/avaliacoes/lista" method="get" class="search-form" style="margin-bottom: 20px;">
+    <input type="text" name="termo" placeholder="Digite o nome do local..." th:value="${termo}" style="padding: 10px; width: 300px;">
+    <button type="submit" class="btn">Buscar</button>
+    <a href="/avaliacoes/lista" class="btn" style="background-color: #6c757d;">Limpar</a>
+</form>
+
+    <div style="display: flex; flex-direction: column; gap: 15px; max-width: 800px; margin: 0 auto;">
+
+        <div th:each="avaliacao : ${avaliacoes}" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                <h3 th:text="${avaliacao.nomeLocal}" style="color: #28a745; margin: 0;">Nome do Local</h3>
+                <span th:text="${#temporals.format(avaliacao.dataAvaliacao, 'dd/MM/yyyy')}" style="color: #666; font-size: 0.9em;">Data</span>
+            </div>
+
+            <p><strong>Avaliador:</strong> <span th:text="${avaliacao.nomeUsuario}">Nome do Usuário</span></p>
+
+            <div style="text-align: right;">
+                <a th:href="@{/avaliacoes/{id}(id=${avaliacao.idAvaliacao})}" class="btn" style="font-size: 0.9em;">Ver Respostas Detalhadas</a>
+            </div>
+        </div>
+
+        <div th:if="${avaliacoes.empty}" style="text-align: center; padding: 20px;">
+            <p>Nenhuma avaliação encontrada para este local.</p>
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 UEL - Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>
