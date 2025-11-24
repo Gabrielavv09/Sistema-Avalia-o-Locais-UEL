@@ -22,9 +22,10 @@ public class LocalCampusController {
     }
 
     @GetMapping("")
-    public String listarTodos(Model model) {
-        List<LocalCampus> locais = localCampusService.buscarTodos();
+    public String listarTodos(@RequestParam(value = "termo", required = false) String termo, Model model) {
+        List<LocalCampus> locais = localCampusService.buscarTodos(termo);
         model.addAttribute("locais", locais);
+        model.addAttribute("termo", termo); // Envia de volta para o input
         return "locais/index";
     }
 

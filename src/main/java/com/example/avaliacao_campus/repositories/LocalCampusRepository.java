@@ -33,7 +33,13 @@ public class LocalCampusRepository {
     };
 
     public List<LocalCampus> findAll() {
-        return jdbc.query("SELECT * FROM localcampus", MAPPER);
+        return jdbc.query("SELECT * FROM localcampus ORDER BY nome ASC", MAPPER);
+    }
+
+    public List<LocalCampus> findByNomeLike(String termo) {
+        String sql = "SELECT * FROM localcampus WHERE nome ILIKE ? ORDER BY nome ASC";
+        String termoBusca = "%" + termo + "%";
+        return jdbc.query(sql, MAPPER, termoBusca);
     }
 
     public Optional<LocalCampus> findById(Long id) {

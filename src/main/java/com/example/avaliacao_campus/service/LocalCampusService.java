@@ -16,9 +16,16 @@ public class LocalCampusService {
         this.localCampusRepository = localCampusRepository;
     }
 
+    public List<LocalCampus> buscarTodos(String termo) {
+        if (termo == null || termo.trim().isEmpty()) {
+            return localCampusRepository.findAll();
+        } else {
+            return localCampusRepository.findByNomeLike(termo);
+        }
+    }
+
     public List<LocalCampus> buscarTodos() {
-        // O repository JDBC já retorna todos ordenados se o SQL tiver ORDER BY
-        return localCampusRepository.findAll();
+        return buscarTodos(null);
     }
 
     public Optional<LocalCampus> buscarPorId(Long id) {
@@ -26,7 +33,6 @@ public class LocalCampusService {
     }
 
     public LocalCampus salvar(LocalCampus local) {
-        // Verifica se já existe um local com esse nome
         Optional<LocalCampus> existente = localCampusRepository.findByNome(local.getNome());
 
         if (existente.isPresent() && (local.getIdLocal() == null ||
@@ -35,16 +41,12 @@ public class LocalCampusService {
         }
 
         if (local.getIdLocal() == null) {
-            // Novo local
             localCampusRepository.save(local);
         } else {
-            // Atualização
             localCampusRepository.update(local);
         }
-
         return local;
     }
-
 
     public void deletar(Long id) {
         localCampusRepository.delete(id);
