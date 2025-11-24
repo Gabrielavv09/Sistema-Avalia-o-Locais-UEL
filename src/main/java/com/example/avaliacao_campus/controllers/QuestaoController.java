@@ -22,9 +22,10 @@ public class QuestaoController {
     }
 
     @GetMapping("")
-    public String listarTodas(Model model) {
-        List<Questao> questoes = questaoService.buscarTodos();
+    public String listarTodas(@RequestParam(value = "termo", required = false) String termo, Model model) {
+        List<Questao> questoes = questaoService.buscarTodos(termo);
         model.addAttribute("questoes", questoes);
+        model.addAttribute("termo", termo); // Envia de volta para o input
         return "questoes/index";
     }
 

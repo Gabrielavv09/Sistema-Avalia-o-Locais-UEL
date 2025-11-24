@@ -36,7 +36,13 @@ public class QuestaoRepository {
     };
 
     public List<Questao> findAll() {
-        return jdbc.query("SELECT * FROM questao", MAPPER);
+        return jdbc.query("SELECT * FROM questao ORDER BY id_questao ASC", MAPPER);
+    }
+
+    public List<Questao> findByTextoLike(String termo) {
+        String sql = "SELECT * FROM questao WHERE texto ILIKE ? ORDER BY id_questao ASC";
+        String termoBusca = "%" + termo + "%";
+        return jdbc.query(sql, MAPPER, termoBusca);
     }
 
     public Optional<Questao> findById(Long id) {

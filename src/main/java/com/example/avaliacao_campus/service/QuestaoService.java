@@ -16,8 +16,16 @@ public class QuestaoService {
         this.questaoRepository = questaoRepository;
     }
 
+    public List<Questao> buscarTodos(String termo) {
+        if (termo == null || termo.trim().isEmpty()) {
+            return questaoRepository.findAll();
+        } else {
+            return questaoRepository.findByTextoLike(termo);
+        }
+    }
+
     public List<Questao> buscarTodos() {
-        return questaoRepository.findAll();
+        return buscarTodos(null);
     }
 
     public Optional<Questao> buscarPorId(Long id) {

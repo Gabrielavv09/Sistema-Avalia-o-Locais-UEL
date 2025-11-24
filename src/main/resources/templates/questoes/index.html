@@ -30,6 +30,13 @@
 
 <section class="questoes">
     <h3>Questões Cadastradas</h3>
+
+    <form action="/questoes" method="get" class="search-form" style="margin-bottom: 20px;">
+        <input type="text" name="termo" placeholder="Buscar por texto..." th:value="${termo}" style="padding: 10px; width: 300px;">
+        <button type="submit" class="btn">Buscar</button>
+        <a href="/questoes" class="btn" style="background-color: #6c757d;">Limpar</a>
+    </form>
+
     <div class="questoes-list">
 
         <div class="questao-card card-hover" th:each="questao : ${questoes}">
@@ -46,19 +53,14 @@
                 <span th:text="${questao.opcoes}">-</span>
             </p>
 
-<!--            <p>-->
-<!--                <strong>Criador:</strong>-->
-<!--                <span th:if="${questao.idUsuarioCriador != null and questao.idUsuarioCriador != 0}"-->
-<!--                      th:text="'Usuário #' + ${questao.idUsuarioCriador}"></span>-->
-<!--                <span th:unless="${questao.idUsuarioCriador != null}" style="color: gray;">-->
-<!--                    Questão Global-->
-<!--                </span>-->
-<!--            </p>-->
-
             <div class="btn-group" style="margin-top: 10px;">
                 <a th:href="@{/questoes/editar/{id}(id=${questao.idQuestao})}" class="btn">Editar</a>
                 <a th:href="@{/questoes/deletar/{id}(id=${questao.idQuestao})}" class="btn">Deletar</a>
             </div>
+        </div>
+
+        <div th:if="${questoes.empty}">
+            <p>Nenhuma questão encontrada.</p>
         </div>
 
     </div>
