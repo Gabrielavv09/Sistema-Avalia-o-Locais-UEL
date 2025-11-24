@@ -16,8 +16,16 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    public List<Usuario> buscarTodos(String termo) {
+        if (termo == null || termo.trim().isEmpty()) {
+            return usuarioRepository.findAll();
+        } else {
+            return usuarioRepository.findByNome(termo);
+        }
+    }
+
     public List<Usuario> buscarTodos() {
-        return usuarioRepository.findAll();
+        return buscarTodos(null);
     }
 
     public Optional<Usuario> buscarPorId(Long id) {
@@ -25,27 +33,21 @@ public class UsuarioService {
     }
 
     public Usuario salvar(Usuario usuario) {
-        // Valida e-mail único
         Optional<Usuario> existente = usuarioRepository.findByEmail(usuario.getEmail());
         if (existente.isPresent() &&
                 (usuario.getIdUsuario() == null || !existente.get().getIdUsuario().equals(usuario.getIdUsuario()))) {
             throw new IllegalArgumentException("Erro: O e-mail " + usuario.getEmail() + " já está cadastrado.");
         }
-
-        // Valida tipo
         String tipo = usuario.getTipo();
         if (tipo == null || (!tipo.equalsIgnoreCase("aluno") && !tipo.equalsIgnoreCase("professor"))) {
             throw new IllegalArgumentException("Erro: O tipo de usuário deve ser 'aluno' ou 'professor'.");
         }
         usuario.setTipo(tipo.toLowerCase());
-
-        // Decide entre inserir ou atualizar
         if (usuario.getIdUsuario() == null) {
             usuarioRepository.save(usuario);
         } else {
             usuarioRepository.update(usuario);
         }
-
         return usuario;
     }
 

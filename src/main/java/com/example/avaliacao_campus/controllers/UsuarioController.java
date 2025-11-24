@@ -22,9 +22,10 @@ public class UsuarioController {
     }
 
     @GetMapping("")
-    public String listarTodos(Model model) {
-        List<Usuario> usuarios = usuarioService.buscarTodos();
+    public String listarTodos(@RequestParam(value = "termo", required = false) String termo, Model model) {
+        List<Usuario> usuarios = usuarioService.buscarTodos(termo);
         model.addAttribute("usuarios", usuarios);
+        model.addAttribute("termo", termo);
         return "usuarios/index";
     }
 

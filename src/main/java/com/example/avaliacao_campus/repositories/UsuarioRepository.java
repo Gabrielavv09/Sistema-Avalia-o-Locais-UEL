@@ -37,6 +37,12 @@ public class UsuarioRepository {
         return jdbc.query("SELECT * FROM usuario", MAPPER);
     }
 
+    public List<Usuario> findByNome(String termo) {
+        String sql = "SELECT * FROM usuario WHERE nome ILIKE ?";
+        String termoBusca = "%" + termo + "%";
+        return jdbc.query(sql, MAPPER, termoBusca);
+    }
+
     public Optional<Usuario> findById(Long id) {
         String sql = "SELECT * FROM usuario WHERE id_usuario = ?";
         return jdbc.query(sql, MAPPER, id).stream().findFirst();
@@ -47,20 +53,12 @@ public class UsuarioRepository {
         return jdbc.query(sql, MAPPER, email).stream().findFirst();
     }
 
-    public List<Usuario> findByTipo(String tipo) {
-        String sql = "SELECT * FROM usuario WHERE tipo = ?";
-        return jdbc.query(sql, MAPPER, tipo);
-    }
-
     public Usuario save(Usuario u) {
         String sql = """
         INSERT INTO usuario (nome, email, tipo, curso_nome, departamento)
         VALUES (?, ?, ?, ?, ?)
     """;
-
-        // Usa KeyHolder para capturar o ID gerado automaticamente
         var keyHolder = new org.springframework.jdbc.support.GeneratedKeyHolder();
-
         jdbc.update(con -> {
             var ps = con.prepareStatement(sql, new String[]{"id_usuario"});
             ps.setString(1, u.getNome());
@@ -70,12 +68,10 @@ public class UsuarioRepository {
             ps.setString(5, u.getDepartamento());
             return ps;
         }, keyHolder);
-
         Number key = keyHolder.getKey();
         if (key != null) {
             u.setIdUsuario(key.longValue());
         }
-
         return u;
     }
 

@@ -30,6 +30,13 @@
 
 <section class="usuarios">
     <h3>Usuários Cadastrados</h3>
+
+    <form action="/usuarios" method="get" class="search-form" style="margin-bottom: 20px;">
+        <input type="text" name="termo" placeholder="Buscar por nome..." th:value="${termo}" style="padding: 10px; width: 300px;">
+        <button type="submit" class="btn">Buscar</button>
+        <a href="/usuarios" class="btn" style="background-color: #6c757d;">Limpar</a>
+    </form>
+
     <div class="usuarios-list">
         <div class="usuario-card card-hover" th:each="usuario : ${usuarios}">
             <h4 th:text="${usuario.nome}">Nome do Usuário</h4>
@@ -37,6 +44,9 @@
             <p th:text="${usuario.departamento}">Departamento</p>
             <a th:href="@{/usuarios/editar/{id}(id=${usuario.idUsuario})}" class="btn">Editar</a>
             <a th:href="@{/usuarios/deletar/{id}(id=${usuario.idUsuario})}" class="btn">Deletar</a>
+        </div>
+        <div th:if="${usuarios.empty}">
+            <p>Nenhum usuário encontrado.</p>
         </div>
     </div>
 </section>
