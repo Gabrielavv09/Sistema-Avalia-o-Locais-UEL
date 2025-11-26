@@ -6,11 +6,10 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable; // Essencial para chaves compostas
 
 @Data
-@NoArgsConstructor // Construtor sem argumentos
-@AllArgsConstructor // Construtor com todos os argumentos
+@NoArgsConstructor
+@AllArgsConstructor
 public class AvaliacaoQuestaoKey implements Serializable {
 
-    // NOTA: Estes campos não precisam de @Id, eles são a chave composta.
     private Long idAvaliacao;
     private Long idQuestao;
 }
