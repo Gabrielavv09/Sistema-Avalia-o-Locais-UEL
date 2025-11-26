@@ -15,7 +15,7 @@
     </div>
     <ul class="nav-links">
         <li><a th:href="@{/}">Tela inicial</a></li>
-        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/relatorios}">Relatórios</a></li> <li><a th:href="@{/usuarios}">Usuários</a></li>
         <li><a th:href="@{/locais}">Locais</a></li>
         <li><a th:href="@{/questoes}">Questões</a></li>
     </ul>
@@ -24,7 +24,11 @@
 <section class="hero">
     <h2>💚 Avalie os Espaços da Universidade</h2>
     <p>Compartilhe sua experiência sobre os espaços da Universidade Estadual de Londrina.</p>
-    <a th:href="@{/avaliacoes/form}" class="btn">Fazer Nova Avaliação</a>
+
+    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+        <a th:href="@{/avaliacoes/form}" class="btn">Fazer Nova Avaliação</a>
+        <a th:href="@{/relatorios}" class="btn">Relatório das Avaliações 📊</a>
+    </div>
 </section>
 
 <section class="avaliacoes">
@@ -37,46 +41,28 @@
     </form>
 
     <div class="avaliacoes-list">
-
         <div th:if="${avaliacoes != null and !avaliacoes.isEmpty()}" th:each="av : ${avaliacoes}">
-
             <a th:href="@{'/avaliacoes/' + ${av.idAvaliacao}}" class="avaliacao-card-link">
                 <div class="avaliacao-card">
-
-                    <img th:if="${av.imagemLocal != null and !av.imagemLocal.isEmpty()}"
-                         th:src="${av.imagemLocal}"
-                         class="avaliacao-img"
-                         alt="Foto do local">
-
-                    <img th:if="${av.imagemLocal == null or av.imagemLocal.isEmpty()}"
-                         th:src="@{/geral/local-placeholder.jpg}"
-                         class="avaliacao-img"
-                         alt="Foto padrão">
-
+                    <img th:if="${av.imagemLocal != null and !av.imagemLocal.isEmpty()}" th:src="${av.imagemLocal}" class="avaliacao-img" alt="Foto do local">
+                    <img th:if="${av.imagemLocal == null or av.imagemLocal.isEmpty()}" th:src="@{/geral/local-placeholder.jpg}" class="avaliacao-img" alt="Foto padrão">
                     <div class="avaliacao-content">
                         <h4 th:text="${av.nomeLocal}">Nome do Local</h4>
-
                         <p class="avaliacao-meta">
                             Avaliado por <span th:text="${av.nomeUsuario}">Usuário</span><br>
                             em <span th:text="${#temporals.format(av.dataAvaliacao, 'dd/MM/yyyy')}">00/00/0000</span>
                         </p>
-
                         <p class="avaliacao-meta" style="margin-top: 0.5rem; color: green; font-size: 0.9em;">
                             (Clique para ver detalhes e notas)
                         </p>
                     </div>
-
                 </div>
             </a>
-
         </div>
-
-        <div th:if="${avaliacoes == null or avaliacoes.isEmpty()}"
-             style="text-align:center; color:gray; margin-top:1rem; width: 100%;">
+        <div th:if="${avaliacoes == null or avaliacoes.isEmpty()}" style="text-align:center; color:gray; margin-top:1rem; width: 100%;">
             <p>Nenhuma avaliação encontrada para este local.</p>
         </div>
     </div>
-
 </section>
 
 <footer><p>&copy; 2025 UEL - Todos os direitos reservados.</p></footer>

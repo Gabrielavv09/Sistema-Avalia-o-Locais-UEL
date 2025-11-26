@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatórios - Campus UEL</title>
+    <link rel="stylesheet" th:href="@{/geral/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<nav>
+    <div class="logo"><h1>Campus UEL</h1></div>
+    <ul class="nav-links">
+        <li><a th:href="@{/}">Tela inicial</a></li>
+        <li><a th:href="@{/relatorios}">Relatórios</a></li>
+        <li><a th:href="@{/usuarios}">Usuários</a></li>
+        <li><a th:href="@{/locais}">Locais</a></li>
+    </ul>
+</nav>
+
+<section class="hero" style="padding: 40px 20px;">
+    <h2>Painel de Relatórios 📈</h2>
+    <p>Visualize as estatísticas e o desempenho dos locais do campus.</p>
+</section>
+
+<div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+
+    <div style="margin-bottom: 60px;">
+        <h3 style="border-bottom: 2px solid #28a745; padding-bottom: 10px; color: #333;">1. Média de Avaliações por Local (Ranking)</h3>
+        <p>Nota média geral (0 a 5) atribuída pelos usuários.</p>
+
+        <div style="margin-bottom: 20px;">
+            <h4>🏆 Top 3 Lugares</h4>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 8px; border: 1px solid #ddd;">Posição</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Local</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Nota Média</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item, stat : ${mediasLocais}" th:if="${stat.index < 3}">
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;" th:text="${stat.count} + 'º'">1º</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;" th:text="${item.local}">Local</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #28a745;" th:text="${item.media}">5.0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <canvas id="graficoUsuarios"></canvas>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 60px;">
+        <h3 style="border-bottom: 2px solid #e67e22; padding-bottom: 10px; color: #333;">2. Comparativo: Alunos vs Professores</h3>
+        <p>Média das notas dadas por cada categoria de usuário.</p>
+
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto;">
+            <canvas id="graficoUsuarios"></canvas>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 60px; opacity: 0.6;">
+        <h3 style="border-bottom: 2px solid #6c757d; padding-bottom: 10px; color: #333;">3. Evolução Temporal (Em Breve)</h3>
+        <p>Espaço reservado para o gráfico de linha.</p>
+        <div style="background: #f8f9fa; padding: 40px; text-align: center; border-radius: 10px; border: 2px dashed #ccc;">
+            Gráfico em desenvolvimento...
+        </div>
+    </div>
+
+</div>
+
+<footer><p>&copy; 2025 UEL - Todos os direitos reservados.</p></footer>
+
+<script th:inline="javascript">
+    var dadosLocais = [[${mediasLocais}]];
+    var dadosUsuarios = [[${mediasUsuarios}]];
+
+    // --- GRÁFICO 1: LOCAIS ---
+    var labelsLocais = dadosLocais.map(d => d.local);
+    var valoresLocais = dadosLocais.map(d => d.media);
+
+    new Chart(document.getElementById('graficoLocais'), {
+        type: 'bar',
+        data: {
+            labels: labelsLocais,
+            datasets: [{
+                label: 'Nota Média',
+                data: valoresLocais,
+                backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                borderColor: 'rgba(40, 167, 69, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true, max: 5 } }
+        }
+    });
+
+    // --- GRÁFICO 2: USUÁRIOS ---
+    var labelsTipo = dadosUsuarios.map(d => d.tipo);
+    var valoresTipo = dadosUsuarios.map(d => d.media);
+
+    new Chart(document.getElementById('graficoUsuarios'), {
+        type: 'bar', // ou 'pie' se preferir pizza
+        data: {
+            labels: labelsTipo,
+            datasets: [{
+                label: 'Nota Média por Categoria',
+                data: valoresTipo,
+                backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true, max: 5 } }
+        }
+    });
+</script>
+
+</body>
+</html>
