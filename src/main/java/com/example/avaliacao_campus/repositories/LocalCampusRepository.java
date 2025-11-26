@@ -3,8 +3,11 @@ package com.example.avaliacao_campus.repositories;
 import com.example.avaliacao_campus.models.LocalCampus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -50,9 +53,27 @@ public class LocalCampusRepository {
         return jdbc.query("SELECT * FROM localcampus WHERE nome=?", MAPPER, nome).stream().findFirst();
     }
 
-    public int save(LocalCampus l) {
+    // --- CORREÇÃO: Método save agora usa KeyHolder para garantir o salvamento e retorno do ID ---
+    public LocalCampus save(LocalCampus l) {
         String sql = "INSERT INTO localcampus (nome, descricao, localizacao, url_image) VALUES (?, ?, ?, ?)";
-        return jdbc.update(sql, l.getNome(), l.getDescricao(), l.getLocalizacao(), l.getUrlImage());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql, new String[]{"id_local"});
+            ps.setString(1, l.getNome());
+            ps.setString(2, l.getDescricao());
+            ps.setString(3, l.getLocalizacao());
+            ps.setString(4, l.getUrlImage());
+            return ps;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        if (key != null) {
+            l.setIdLocal(key.longValue());
+        }
+
+        return l;
     }
 
     public int update(LocalCampus l) {

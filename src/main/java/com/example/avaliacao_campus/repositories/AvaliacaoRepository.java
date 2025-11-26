@@ -41,7 +41,6 @@ public class AvaliacaoRepository {
 
 
     public List<Avaliacao> findAllWithNames() {
-        // O SQL inclui 'l.url_image'
         String sql = """
             SELECT a.*, u.nome AS usuario_nome, l.nome AS local_nome, l.url_image AS local_imagem
             FROM avaliacao a
@@ -86,8 +85,6 @@ public class AvaliacaoRepository {
         """;
         return jdbc.queryForList(sql);
     }
-
-    // --- MÉTODOS CRUD BÁSICOS ---
 
     public Long saveAndReturnId(Avaliacao a) {
         String sql = """
