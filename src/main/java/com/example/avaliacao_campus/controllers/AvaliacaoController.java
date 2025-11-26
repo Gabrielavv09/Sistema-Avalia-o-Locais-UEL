@@ -47,7 +47,6 @@ public class AvaliacaoController {
 
     @GetMapping("/form")
     public String exibirFormulario(Model model) {
-        // ... (código existente para montar o formulário) ...
         List<Questao> questoesPadrao = questaoService.buscarPorTipo("padrao");
         List<Questao> questoesPersonalizadas = questaoService.buscarPorTipo("multipla");
         List<LocalCampus> locais = localCampusService.buscarTodos();
