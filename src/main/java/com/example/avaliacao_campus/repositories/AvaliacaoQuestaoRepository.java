@@ -85,4 +85,20 @@ public class AvaliacaoQuestaoRepository {
         """;
         return jdbc.queryForList(sql);
     }
+
+    public List<Map<String, Object>> getEvolucaoAvaliacoes() {
+        String sql = """
+        SELECT 
+            to_char(date_trunc('week', a.data_avaliacao), 'DD/MM/YYYY') AS semana,
+            CAST(AVG(CAST(aq.valor AS DECIMAL(10,2))) AS DECIMAL(10,1)) AS media
+        FROM avaliacao_questao aq
+        JOIN avaliacao a ON aq.id_avaliacao = a.id_avaliacao
+        WHERE aq.valor ~ '^[0-9]+(\\\\.[0-9]+)?$'
+        GROUP BY date_trunc('week', a.data_avaliacao)
+        ORDER BY date_trunc('week', a.data_avaliacao)
+    """;
+
+        return jdbc.queryForList(sql);
+    }
+
 }
