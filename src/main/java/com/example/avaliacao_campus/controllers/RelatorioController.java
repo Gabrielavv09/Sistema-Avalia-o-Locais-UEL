@@ -21,9 +21,11 @@ public class RelatorioController {
     public String exibirRelatorios(Model model) {
         List<Map<String, Object>> mediasLocais = repo.getMediaPorLocal();
         List<Map<String, Object>> mediasUsuarios = repo.getMediaPorTipoUsuario();
+        List<Map<String, Object>> evolucaoAvaliacoes = repo.getEvolucaoAvaliacoes();
 
         model.addAttribute("mediasLocais", mediasLocais);
         model.addAttribute("mediasUsuarios", mediasUsuarios);
+        model.addAttribute("evolucaoAvaliacoes", evolucaoAvaliacoes);
 
         return "relatorios/index";
     }

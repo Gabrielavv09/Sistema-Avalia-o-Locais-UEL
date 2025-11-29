@@ -49,13 +49,15 @@
             </table>
         </div>
 
+        <h3 style="border-bottom: 2px solid #28a745; padding-bottom: 10px; color: #333;">2. Top 6 maiores médias do locais avaliados</h3>
+        <p>Gráfico de barras com a nota média.</p>
         <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-            <canvas id="graficoUsuarios"></canvas>
+            <canvas id="graficoLocais"></canvas>
         </div>
     </div>
 
     <div style="margin-bottom: 60px;">
-        <h3 style="border-bottom: 2px solid #e67e22; padding-bottom: 10px; color: #333;">2. Comparativo: Alunos vs Professores</h3>
+        <h3 style="border-bottom: 2px solid #e67e22; padding-bottom: 10px; color: #333;">3. Comparativo: Alunos vs Professores</h3>
         <p>Média das notas dadas por cada categoria de usuário.</p>
 
         <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto;">
@@ -63,13 +65,17 @@
         </div>
     </div>
 
-    <div style="margin-bottom: 60px; opacity: 0.6;">
-        <h3 style="border-bottom: 2px solid #6c757d; padding-bottom: 10px; color: #333;">3. Evolução Temporal (Em Breve)</h3>
-        <p>Espaço reservado para o gráfico de linha.</p>
-        <div style="background: #f8f9fa; padding: 40px; text-align: center; border-radius: 10px; border: 2px dashed #ccc;">
-            Gráfico em desenvolvimento...
+    <div style="margin-bottom: 60px;">
+        <h3 style="border-bottom: 2px solid #6c757d; padding-bottom: 10px; color: #333;">
+            4. Evolução das avaliações ao longo do tempo
+        </h3>
+        <p>Variação da nota média ao longo do tempo.</p>
+        <div style="background: white; padding: 20px; border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;">
+            <canvas id="graficoEvolucao"></canvas>
         </div>
     </div>
+
 
 </div>
 
@@ -78,47 +84,86 @@
 <script th:inline="javascript">
     var dadosLocais = [[${mediasLocais}]];
     var dadosUsuarios = [[${mediasUsuarios}]];
+    var dadosEvolucao = [[${evolucaoAvaliacoes}]];
 
-    // --- GRÁFICO 1: LOCAIS ---
+    // 02
     var labelsLocais = dadosLocais.map(d => d.local);
     var valoresLocais = dadosLocais.map(d => d.media);
 
-    new Chart(document.getElementById('graficoLocais'), {
-        type: 'bar',
-        data: {
-            labels: labelsLocais,
-            datasets: [{
-                label: 'Nota Média',
-                data: valoresLocais,
-                backgroundColor: 'rgba(40, 167, 69, 0.6)',
-                borderColor: 'rgba(40, 167, 69, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: { y: { beginAtZero: true, max: 5 } }
-        }
-    });
+    var ctxLocais = document.getElementById('graficoLocais');
+    if (ctxLocais) {
+        new Chart(ctxLocais, {
+            type: 'bar',
+            data: {
+                labels: labelsLocais,
+                datasets: [{
+                    label: 'Nota Média',
+                    data: valoresLocais,
+                    backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, max: 5 } }
+            }
+        });
+    }
 
-    // --- GRÁFICO 2: USUÁRIOS ---
+    // 03
     var labelsTipo = dadosUsuarios.map(d => d.tipo);
     var valoresTipo = dadosUsuarios.map(d => d.media);
 
-    new Chart(document.getElementById('graficoUsuarios'), {
-        type: 'bar', // ou 'pie' se preferir pizza
-        data: {
-            labels: labelsTipo,
-            datasets: [{
-                label: 'Nota Média por Categoria',
-                data: valoresTipo,
-                backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: { y: { beginAtZero: true, max: 5 } }
-        }
-    });
+    var ctxUsuarios = document.getElementById('graficoUsuarios');
+    if (ctxUsuarios) {
+        new Chart(ctxUsuarios, {
+            type: 'pie', // ou 'pie'
+            data: {
+                labels: labelsTipo,
+                datasets: [{
+                    label: 'Nota Média por Categoria',
+                    data: valoresTipo,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, max: 5 } }
+            }
+        });
+    }
+
+    // 04
+    var labelsEvolucao = dadosEvolucao.map(d => d.semana);
+    var valoresEvolucao = dadosEvolucao.map(d => d.media);
+
+    var ctxEvolucao = document.getElementById('graficoEvolucao');
+    if (ctxEvolucao) {
+        new Chart(ctxEvolucao, {
+            type: 'line',
+            data: {
+                labels: labelsEvolucao,
+                datasets: [{
+                    label: 'Nota média semanal',
+                    data: valoresEvolucao,
+                    fill: false,
+                    tension: 0.3,
+                    borderColor: 'rgba(108, 117, 125, 1)',
+                    backgroundColor: 'rgba(108, 117, 125, 0.3)',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, max: 5 }
+                }
+            }
+        });
+    }
 </script>
 
 </body>
